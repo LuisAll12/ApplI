@@ -2,3 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --color-bg: #ffffff;
+  --color-text: #101721;
+}
+
+.dark {
+  --color-bg: #101721;
+  --color-text: #ffffff;
+}

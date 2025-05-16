@@ -4,13 +4,14 @@ export default {
     "./index.html",
     "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
         primary: "#5529ee",
         primaryLight: "#8d6eef",
         secondary: "#22c3f7",
-        grayscale: {
+        gray: {
           dark: {
             900: "#101721",
             800: "#161a25",
@@ -30,10 +31,6 @@ export default {
         alert: "#58ca82",
         error: "#d04763",
         warning: "#f6d77a",
-      },
-      gradientColorStops: {
-        primary: "#5529ee",
-        'primary-end': "#8d6eef",
       }
     },
   },
