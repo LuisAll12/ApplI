@@ -1,18 +1,7 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { useDarkMode } from '../composables/useDarkMode.js'
 
-const dark = ref(false)
-
-onMounted(() => {
-  dark.value = localStorage.theme === 'dark'
-  document.documentElement.classList.toggle('dark', dark.value)
-})
-
-const toggleDark = () => {
-  dark.value = !dark.value
-  document.documentElement.classList.toggle('dark', dark.value)
-  localStorage.theme = dark.value ? 'dark' : 'light'
-}
+const { dark, toggleDark } = useDarkMode()
 </script>
 
 <template>
