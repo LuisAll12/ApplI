@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/FrontpageView.vue'
-import Chat from '../views/FrontpageView.vue'
+import Chat from '../views/ChatView.vue'
 
 
 // Example route components (replace with your actual components)
