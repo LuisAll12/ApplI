@@ -16,20 +16,20 @@ router.post('/', async (req, res) => {
 
   try {
     const html = `
-      <html lang="de">
-      <head>
-        <meta charset="UTF-8" />
-        <title>Bewerbung</title>
-        <style>
-          body { font-family: Arial, sans-serif; padding: 2rem; line-height: 1.5; }
-          h2 { color: #5529ee; margin-bottom: 0.5rem; }
-          hr { margin: 2rem 0; border: none; border-top: 1px solid #ccc; }
-        </style>
-      </head>
-      <body>
-        ${letters.map(l => `<h2>${l.style}</h2>${l.html}<hr/>`).join('\n')}
-      </body>
-      </html>
+    <html>
+        <head>
+            <meta charset="UTF-8" />
+            <style>
+                body { font-family: Arial, sans-serif; font-size: 14px; padding: 40px; color: #000; }
+                h2 { color: #5529ee; }
+            </style>
+        </head>
+        <body>
+            <h2>Formell</h2>
+            <p>Sehr geehrte Damen und Herren,</p>
+            <p>ich bewerbe mich hiermit auf Ihre ausgeschriebene Stelle...</p>
+        </body>
+    </html>
     `
 
     const fileName = `${uuidv4()}.pdf`

@@ -7,7 +7,7 @@ export async function generatePDF(html, outputPath) {
   const page = await browser.newPage()
 
   await page.setContent(html, { waitUntil: 'networkidle0' })
-
+  await page.setContent(html, { waitUntil: 'networkidle0' })
   const pdfBuffer = await page.pdf({
     path: outputPath,
     format: 'A4',

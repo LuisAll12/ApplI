@@ -127,7 +127,8 @@ watch(applicationPreviews, (val) => {
 })
 
 const submitForm = () => {
-    if (!validateForm()) return
+    const valid = validateForm()
+    if (!valid) return
     hasSubmitted.value = true
 
     // Hier wird die Bewerbung erstellt
@@ -219,6 +220,10 @@ const validateCurrentStep = () => {
     }
     return valid
 }
+watch(hasSubmitted, val => {
+    console.log('🌀 hasSubmitted geändert auf:', val)
+})
+
 
 
 
@@ -268,12 +273,12 @@ const submittedProgress = computed(() => {
 </script>
 
 <template>
-  <header class="flex justify-between items-center px-6 py-4 bg-white dark:bg-gray-dark-700 border-b dark:border-gray-dark-500">
-    <h1 @click="router.push('/')" class="text-2xl font-bold text-primary cursor-pointer">ApplI</h1>
-    <DarkToggle />
-  </header>
+    <header class="flex justify-between items-center px-6 py-4 bg-white dark:bg-gray-dark-700 border-b dark:border-gray-dark-500">
+        <h1 @click="router.push('/')" class="text-2xl font-bold text-primary cursor-pointer">ApplI</h1>
+        <DarkToggle />
+    </header>
     <div class="min-h-screen w-full p-6 bg-white text-gray-900 dark:bg-gray-dark-900 dark:text-white transition-colors">
-        <div v-if="!hasSubmitted">
+        <div v-if="hasSubmitted === false">
             <h2 class="text-2xl font-bold mb-4">Bewerbung - Schritt {{ step }}</h2>
 
             <!-- Step 1: Persönliches -->
