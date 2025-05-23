@@ -21,6 +21,12 @@ const routes = [
         path: '/job-search',
         name: 'JobSearch',
         component: JobSearch
+    },
+    {
+        path: '/chat/new',
+        name: 'NewChat',
+        component: () => import('../views/NewChatView.vue'),
+        meta: {fullscreen: true}
     }
 ]
 
