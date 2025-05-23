@@ -14,106 +14,113 @@ const step = ref(1)
 const maxStep = computed(() => skipJobStep ? 4 : 5)
 
 const form = reactive({
-  personal: {
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-  },
-  experience: {
-    education: '',
-    currentJob: '',
-    yearsExperience: ''
-  },
-  motivation: {
-    strengths: '',
-    whyThisField: '',
-  },
-  job: {
-    companyName: jobTitle || '',
-    position: '',
-    employmentType: '100%',
-  }
+    personal: {
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+    },
+    experience: {
+        education: '',
+        currentJob: '',
+        yearsExperience: ''
+    },
+    motivation: {
+        strengths: '',
+        whyThisField: '',
+    },
+    job: {
+        companyName: jobTitle || '',
+        position: '',
+        employmentType: '100%',
+    }
 })
 
 const errors = reactive({
-  personal: {},
-  experience: {},
-  motivation: {},
-  job: {}
+    personal: {},
+    experience: {},
+    motivation: {},
+    job: {}
 })
 
+const submitForm = () => {
+    if (!validateForm()) return
+    alert('Formular erfolgreich abgeschlossen!') // oder Weiterleitung:
+    // router.push('/vorschau') oder ein API Call
+}
 
 
 const validateForm = () => {
-  // Reset errors
-  Object.keys(errors).forEach(key => errors[key] = {})
+    // Reset errors
+    Object.keys(errors).forEach(key => errors[key] = {})
 
-  let valid = true
+    let valid = true
 
-  // Persönliche Daten
-  if (!form.personal.firstName) {
-    errors.personal.firstName = 'Vorname ist erforderlich'
-    valid = false
-  }
-  if (!form.personal.lastName) {
-    errors.personal.lastName = 'Nachname ist erforderlich'
-    valid = false
-  }
-  if (!form.personal.email) {
-    errors.personal.email = 'E-Mail ist erforderlich'
-    valid = false
-  }
-  if (!form.personal.phone) {
-    errors.personal.phone = 'Telefonnummer ist erforderlich'
-    valid = false
-  }
-
-  // Erfahrung
-  if (!form.experience.education) {
-    errors.experience.education = 'Ausbildung ist erforderlich'
-    valid = false
-  }
-  if (!form.experience.currentJob) {
-    errors.experience.currentJob = 'Aktueller Beruf ist erforderlich'
-    valid = false
-  }
-  if (!form.experience.yearsExperience) {
-    errors.experience.yearsExperience = 'Erfahrung ist erforderlich'
-    valid = false
-  }
-
-  // Motivation
-  if (!form.motivation.strengths) {
-    errors.motivation.strengths = 'Stärken müssen angegeben werden'
-    valid = false
-  }
-  if (!form.motivation.whyThisField) {
-    errors.motivation.whyThisField = 'Motivation ist erforderlich'
-    valid = false
-  }
-
-  // Jobdaten nur wenn nicht übersprungen
-  if (!skipJobStep) {
-    if (!form.job.companyName) {
-      errors.job.companyName = 'Unternehmen fehlt'
-      valid = false
+    // Persönliche Daten
+    if (!form.personal.firstName) {
+        errors.personal.firstName = 'Vorname ist erforderlich'
+        valid = false
     }
-    if (!form.job.position) {
-      errors.job.position = 'Position fehlt'
-      valid = false
+    if (!form.personal.lastName) {
+        errors.personal.lastName = 'Nachname ist erforderlich'
+        valid = false
     }
-    if (!form.job.employmentType) {
-      errors.job.employmentType = 'Pensum fehlt'
-      valid = false
+    if (!form.personal.email) {
+        errors.personal.email = 'E-Mail ist erforderlich'
+        valid = false
     }
-  }
+    if (!form.personal.phone) {
+        errors.personal.phone = 'Telefonnummer ist erforderlich'
+        valid = false
+    }
 
-  return valid
+    // Erfahrung
+    if (!form.experience.education) {
+        errors.experience.education = 'Ausbildung ist erforderlich'
+        valid = false
+    }
+    if (!form.experience.currentJob) {
+        errors.experience.currentJob = 'Aktueller Beruf ist erforderlich'
+        valid = false
+    }
+    if (!form.experience.yearsExperience) {
+        errors.experience.yearsExperience = 'Erfahrung ist erforderlich'
+        valid = false
+    }
+
+    // Motivation
+    if (!form.motivation.strengths) {
+        errors.motivation.strengths = 'Stärken müssen angegeben werden'
+        valid = false
+    }
+    if (!form.motivation.whyThisField) {
+        errors.motivation.whyThisField = 'Motivation ist erforderlich'
+        valid = false
+    }
+
+    // Jobdaten nur wenn nicht übersprungen
+    if (!skipJobStep) {
+        if (!form.job.companyName) {
+        errors.job.companyName = 'Unternehmen fehlt'
+        valid = false
+        }
+        if (!form.job.position) {
+        errors.job.position = 'Position fehlt'
+        valid = false
+        }
+        if (!form.job.employmentType) {
+        errors.job.employmentType = 'Pensum fehlt'
+        valid = false
+        }
+    }
+
+    return valid
 }
 
 const nextStep = () => {
-  if (step.value < maxStep.value) step.value++
+    if (step.value === maxStep.value) return
+    const currentStepValid = validateCurrentStep()
+    if (currentStepValid) step.value++
 }
 const prevStep = () => {
   if (step.value > 1) step.value--
@@ -135,48 +142,88 @@ const prevStep = () => {
         <div v-if="step === 1" class="space-y-4">
             <label class="block">
                 <span class="text-sm">Vorname</span>
-                <input v-model="form.personal.firstName" type="text" class="w-full mt-1 input" />
+                <input
+                v-model="form.personal.firstName"
+                :class="['w-full mt-1 input', errors.personal.firstName && 'inputError']"
+                type="text"
+                />
                 <p v-if="errors.personal.firstName" class="text-red-500 text-sm mt-1">{{ errors.personal.firstName }}</p>
             </label>
+
             <label class="block">
                 <span class="text-sm">Nachname</span>
-                <input v-model="form.personal.lastName" type="text" class="w-full mt-1 input" />
+                <input
+                v-model="form.personal.lastName"
+                :class="['w-full mt-1 input', errors.personal.lastName && 'inputError']"
+                type="text"
+                />
+                <p v-if="errors.personal.lastName" class="text-red-500 text-sm mt-1">{{ errors.personal.lastName }}</p>
             </label>
+
             <label class="block">
                 <span class="text-sm">E-Mail</span>
-                <input v-model="form.personal.email" type="email" class="w-full mt-1 input" />
+                <input
+                v-model="form.personal.email"
+                :class="['w-full mt-1 input', errors.personal.email && 'inputError']"
+                type="email"
+                />
+                <p v-if="errors.personal.email" class="text-red-500 text-sm mt-1">{{ errors.personal.email }}</p>
             </label>
+
             <label class="block">
                 <span class="text-sm">Telefon</span>
-                <input v-model="form.personal.phone" type="tel" class="w-full mt-1 input" />
+                <input
+                v-model="form.personal.phone"
+                :class="['w-full mt-1 input', errors.personal.phone && 'inputError']"
+                type="tel"
+                />
+                <p v-if="errors.personal.phone" class="text-red-500 text-sm mt-1">{{ errors.personal.phone }}</p>
             </label>
         </div>
 
-            <!-- Step 2: Ausbildung & Berufserfahrung -->
+
+        <!-- Step 2: Ausbildung & Berufserfahrung -->
         <div v-if="step === 2" class="space-y-4">
             <label class="block">
                 <span class="text-sm">Ausbildung</span>
-                <input v-model="form.experience.education" type="text" class="w-full mt-1 input" placeholder="z. B. KV EFZ, Informatikmittelschule" />
+                <input v-model="form.experience.education"
+                        :class="['w-full mt-1 input', errors.experience.education && 'inputError']"
+                        type="text" />
+                <p v-if="errors.experience.education" class="text-red-500 text-sm mt-1">{{ errors.experience.education }}</p>
             </label>
+
             <label class="block">
                 <span class="text-sm">Aktueller Beruf / Position</span>
-                <input v-model="form.experience.currentJob" type="text" class="w-full mt-1 input" placeholder="z. B. Praktikant, Webentwickler" />
+                <input v-model="form.experience.currentJob"
+                        :class="['w-full mt-1 input', errors.experience.currentJob && 'inputError']"
+                        type="text" />
+                <p v-if="errors.experience.currentJob" class="text-red-500 text-sm mt-1">{{ errors.experience.currentJob }}</p>
             </label>
+
             <label class="block">
                 <span class="text-sm">Berufserfahrung in Jahren</span>
-                <input v-model="form.experience.yearsExperience" type="number" class="w-full mt-1 input" placeholder="z. B. 1" />
+                <input v-model="form.experience.yearsExperience"
+                        :class="['w-full mt-1 input', errors.experience.yearsExperience && 'inputError']"
+                        type="number" />
+                <p v-if="errors.experience.yearsExperience" class="text-red-500 text-sm mt-1">{{ errors.experience.yearsExperience }}</p>
             </label>
         </div>
 
-        <!-- Step 3: Motivation & Stärken -->
         <div v-if="step === 3" class="space-y-4">
             <label class="block">
                 <span class="text-sm">Was sind deine Stärken?</span>
-                <textarea v-model="form.motivation.strengths" class="w-full mt-1 input" rows="3" placeholder="z. B. Teamfähig, organisiert, analytisch"></textarea>
+                <textarea v-model="form.motivation.strengths"
+                            :class="['w-full mt-1 input', errors.motivation.strengths && 'inputError']"
+                            rows="3"></textarea>
+                <p v-if="errors.motivation.strengths" class="text-red-500 text-sm mt-1">{{ errors.motivation.strengths }}</p>
             </label>
+
             <label class="block">
                 <span class="text-sm">Warum interessierst du dich für dieses Berufsfeld?</span>
-                <textarea v-model="form.motivation.whyThisField" class="w-full mt-1 input" rows="3" placeholder="z. B. Ich liebe es, Probleme logisch zu lösen..."></textarea>
+                <textarea v-model="form.motivation.whyThisField"
+                            :class="['w-full mt-1 input', errors.motivation.whyThisField && 'inputError']"
+                            rows="3"></textarea>
+                <p v-if="errors.motivation.whyThisField" class="text-red-500 text-sm mt-1">{{ errors.motivation.whyThisField }}</p>
             </label>
         </div>
 
@@ -185,15 +232,26 @@ const prevStep = () => {
         <div v-if="step === 4 && !skipJobStep" class="space-y-4">
             <label class="block">
                 <span class="text-sm">Unternehmen</span>
-                <input v-model="form.job.companyName" type="text" class="w-full mt-1 input" placeholder="z. B. UBS Group" />
+                <input v-model="form.job.companyName"
+                        :class="['w-full mt-1 input', errors.job.companyName && 'inputError']"
+                        type="text" />
+                <p v-if="errors.job.companyName" class="text-red-500 text-sm mt-1">{{ errors.job.companyName }}</p>
             </label>
+
             <label class="block">
                 <span class="text-sm">Stellenbezeichnung</span>
-                <input v-model="form.job.position" type="text" class="w-full mt-1 input" placeholder="z. B. Buchhalter" />
+                <input v-model="form.job.position"
+                        :class="['w-full mt-1 input', errors.job.position && 'inputError']"
+                        type="text" />
+                <p v-if="errors.job.position" class="text-red-500 text-sm mt-1">{{ errors.job.position }}</p>
             </label>
+
             <label class="block">
                 <span class="text-sm">Pensum (in %)</span>
-                <input v-model="form.job.employmentType" type="text" class="w-full mt-1 input" placeholder="z. B. 100%" />
+                <input v-model="form.job.employmentType"
+                        :class="['w-full mt-1 input', errors.job.employmentType && 'inputError']"
+                        type="text" />
+                <p v-if="errors.job.employmentType" class="text-red-500 text-sm mt-1">{{ errors.job.employmentType }}</p>
             </label>
         </div>  
 
@@ -220,7 +278,7 @@ const prevStep = () => {
 
             <!-- Weiter/Abschliessen-Button -->
             <button
-                @click="step < maxStep ? nextStep() : submitForm()"
+                @click="step < maxStep ? nextStep() : (validateForm() && submitForm())"
                 class="flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition 
                     bg-primary hover:bg-primary-light 
                     text-white shadow-md">
@@ -238,5 +296,9 @@ const prevStep = () => {
             bg-gray-100 dark:bg-gray-dark-600 
             text-gray-900 dark:text-white 
             placeholder-gray-500 dark:placeholder-gray-light-300;
+}
+
+.inputError {
+    @apply border-red-500 dark:border-red-500;
 }
 </style>
