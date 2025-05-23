@@ -11,7 +11,7 @@
         </p>
       </div>
       <div class="mt-10 flex gap-2">
-        <button class="bg-white text-[#5529ee] px-4 py-1.5 rounded-xl font-medium shadow hover:bg-gray-100">Neuer Chat</button>
+        <button class="bg-white text-[#5529ee] px-4 py-1.5 rounded-xl font-medium shadow hover:bg-gray-100" @click="router.push('chat/new')">Neuer Chat</button>
         <button class="bg-white/20 border border-white/30 text-white px-4 py-1.5 rounded-xl font-medium flex items-center gap-1 hover:bg-white/10">
           Weiter lesen
           <ArrowRightIcon class="w-4 h-4" />
@@ -22,5 +22,8 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
 import { InformationCircleIcon, ArrowRightIcon, ChatBubbleLeftRightIcon } from '@heroicons/vue/24/solid'
+
+const router = useRouter()
 </script>
