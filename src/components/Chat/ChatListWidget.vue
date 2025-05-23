@@ -13,6 +13,13 @@
         <p class="text-sm text-gray-600 dark:text-gray-400">{{ chat.lastMessage }}</p>
       </li>
     </ul>
+    <div class="mt-6">
+      <button
+        @click="$router.push('/job-search')"
+        class="bg-primary text-white text-sm px-4 py-2 rounded hover:bg-primary-light transition">
+        Zu den Job-Inseraten
+      </button>
+    </div>
   </div>
 </template>
 
