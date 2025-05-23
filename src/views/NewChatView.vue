@@ -267,7 +267,7 @@ const prevStep = () => {
                 <input v-model="form.job.position"
                         :class="['w-full mt-1 input', errors.job.position && 'inputError']"
                         type="text" />
-                <p v-if="errors.job.position" class="text-red-500 text-sm mt-1">{{ errors.job.position }}</p>
+                <p v-if="errors.job.position" class="text-error text-sm mt-1">{{ errors.job.position }}</p>
             </label>
 
             <label class="block">
@@ -281,10 +281,17 @@ const prevStep = () => {
 
 
         <!-- Step 5: Zusammenfassung -->
-        <div v-if="step === maxStep" class="relative flex flex-col lg:flex-row justify-between items-start min-h-[600px]">
-            <div class="absolute inset-0 overflow-hidden">
-                <div class="absolute top-[20%] left-[-10%] w-[300px] h-[300px] rounded-full border-4 border-primary opacity-30"></div>
-                <div class="absolute top-[50%] left-0 w-[500px] h-[500px] rounded-full border-4 border-secondary opacity-20"></div>
+        <div v-if="step === maxStep" class="relative flex flex-col lg:flex-row justify-between items-start min-h-[600px] overflow-hidden">
+
+            <!-- 🔵 Dekorative Kreise im Hintergrund (z-index 0) -->
+            <div class="absolute top-[-170px] right-[-150px] w-[700px] h-[700px] z-0 pointer-events-none">
+                <div class="absolute w-full h-full rounded-full bg-gradient-to-br from-primary to-primary-light opacity-70"></div>
+                <div class="absolute top-[80px] right-[80px] w-[500px] h-[500px] rounded-full bg-gradient-to-br from-primary-light to-secondary opacity-60"></div>
+            </div>
+
+            <!-- 📱 Phone-Mockup separat -->
+            <div class="absolute top-[20px] right-[80px] z-10 hidden lg:block">
+                <img :src="phoneMockup" alt="Phone Mockup" class="w-[280px] lg:w-[320px] drop-shadow-2xl" />
             </div>
             <div class="z-10 w-full lg:w-2/3 space-y-6">
                 <h3 class="text-2xl font-semibold">Zusammenfassung</h3>
@@ -328,9 +335,6 @@ const prevStep = () => {
                         <li><strong>Pensum:</strong> {{ form.job.employmentType }}</li>
                     </ul>
                 </section>
-            </div>
-            <div class="z-10 mt-10 lg:mt-0 lg:w-1/3 flex justify-center">
-                <img :src="phoneMockup" alt="Phone Mockup" class="w-[250px] lg:w-[320px] drop-shadow-2xl" />
             </div>
         </div>
 
