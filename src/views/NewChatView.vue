@@ -13,25 +13,47 @@ const skipJobStep = !!jobTitle
 const step = ref(1)
 const maxStep = computed(() => skipJobStep ? 4 : 5)
 
+// const form = reactive({
+//     personal: {
+//         firstName: '',
+//         lastName: '',
+//         email: '',
+//         phone: '',
+//     },
+//     experience: {
+//         education: '',
+//         currentJob: '',
+//         yearsExperience: ''
+//     },
+//     motivation: {
+//         strengths: '',
+//         whyThisField: '',
+//     },
+//     job: {
+//         companyName: jobTitle || '',
+//         position: '',
+//         employmentType: '100%',
+//     }
+// })
 const form = reactive({
     personal: {
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
+        firstName: 'Luis',
+        lastName: 'Allamand',
+        email: 'luis@g-12.ch',
+        phone: '0783123399',
     },
     experience: {
-        education: '',
-        currentJob: '',
-        yearsExperience: ''
+        education: 'Applikationsentwickler EFZ mit Berufsmatur',
+        currentJob: 'Informatikmitelschule',
+        yearsExperience: '2'
     },
     motivation: {
-        strengths: '',
-        whyThisField: '',
+        strengths: 'Mathe und Informatik',
+        whyThisField: 'Es macht mir Spass und ich kann meine Stärken einsetzen',
     },
     job: {
-        companyName: jobTitle || '',
-        position: '',
+        companyName: jobTitle || 'UBS Group AG',
+        position: 'Informatiker',
         employmentType: '100%',
     }
 })
@@ -50,70 +72,71 @@ const submitForm = () => {
 }
 
 
-const validateForm = () => {
-    // Reset errors
+const validateCurrentStep = () => {
+  // nur Fehler für aktuellen Step prüfen
     Object.keys(errors).forEach(key => errors[key] = {})
 
     let valid = true
 
-    // Persönliche Daten
-    if (!form.personal.firstName) {
+    if (step.value === 1) {
+        if (!form.personal.firstName) {
         errors.personal.firstName = 'Vorname ist erforderlich'
         valid = false
-    }
-    if (!form.personal.lastName) {
+        }
+        if (!form.personal.lastName) {
         errors.personal.lastName = 'Nachname ist erforderlich'
         valid = false
-    }
-    if (!form.personal.email) {
+        }
+        if (!form.personal.email) {
         errors.personal.email = 'E-Mail ist erforderlich'
         valid = false
-    }
-    if (!form.personal.phone) {
+        }
+        if (!form.personal.phone) {
         errors.personal.phone = 'Telefonnummer ist erforderlich'
         valid = false
+        }
     }
 
-    // Erfahrung
-    if (!form.experience.education) {
+    if (step.value === 2) {
+        if (!form.experience.education) {
         errors.experience.education = 'Ausbildung ist erforderlich'
         valid = false
-    }
-    if (!form.experience.currentJob) {
+        }
+        if (!form.experience.currentJob) {
         errors.experience.currentJob = 'Aktueller Beruf ist erforderlich'
         valid = false
-    }
-    if (!form.experience.yearsExperience) {
-        errors.experience.yearsExperience = 'Erfahrung ist erforderlich'
-        valid = false
-    }
-
-    // Motivation
-    if (!form.motivation.strengths) {
-        errors.motivation.strengths = 'Stärken müssen angegeben werden'
-        valid = false
-    }
-    if (!form.motivation.whyThisField) {
-        errors.motivation.whyThisField = 'Motivation ist erforderlich'
-        valid = false
+        }
+        if (!form.experience.yearsExperience) {
+            errors.experience.yearsExperience = 'Erfahrung ist erforderlich'
+            valid = false
+        }
     }
 
-    // Jobdaten nur wenn nicht übersprungen
-    if (!skipJobStep) {
+    if (step.value === 3) {
+        if (!form.motivation.strengths) {
+            errors.motivation.strengths = 'Stärken müssen angegeben werden'
+            valid = false
+        }
+        if (!form.motivation.whyThisField) {
+            errors.motivation.whyThisField = 'Motivation ist erforderlich'
+            valid = false
+        }
+    }
+
+    if (step.value === 4 && !skipJobStep) {
         if (!form.job.companyName) {
-        errors.job.companyName = 'Unternehmen fehlt'
-        valid = false
+            errors.job.companyName = 'Unternehmen fehlt'
+            valid = false
         }
         if (!form.job.position) {
-        errors.job.position = 'Position fehlt'
-        valid = false
+            errors.job.position = 'Position fehlt'
+            valid = false
         }
         if (!form.job.employmentType) {
-        errors.job.employmentType = 'Pensum fehlt'
-        valid = false
+            errors.job.employmentType = 'Pensum fehlt'
+            valid = false
         }
     }
-
     return valid
 }
 
@@ -257,10 +280,50 @@ const prevStep = () => {
 
 
         <!-- Step 5: Zusammenfassung -->
-        <div v-if="step === maxStep" class="space-y-4">
-            <h3 class="text-lg font-semibold">Zusammenfassung:</h3>
-            <pre class="bg-gray-800 p-4 rounded text-sm">{{ form }}</pre>
+        <div v-if="step === maxStep" class="space-y-6">
+        <h3 class="text-2xl font-semibold">Zusammenfassung</h3>
+
+        <!-- Persönliches -->
+        <section>
+            <h4 class="text-lg font-semibold text-primary mb-2">Persönliche Angaben</h4>
+            <ul class="space-y-1 text-sm text-gray-800 dark:text-gray-200">
+                <li><strong>Vorname:</strong> {{ form.personal.firstName }}</li>
+                <li><strong>Nachname:</strong> {{ form.personal.lastName }}</li>
+                <li><strong>E-Mail:</strong> {{ form.personal.email }}</li>
+                <li><strong>Telefon:</strong> {{ form.personal.phone }}</li>
+            </ul>
+        </section>
+
+        <!-- Berufserfahrung -->
+        <section>
+            <h4 class="text-lg font-semibold text-primary mb-2">Ausbildung & Beruf</h4>
+            <ul class="space-y-1 text-sm text-gray-800 dark:text-gray-200">
+                <li><strong>Ausbildung:</strong> {{ form.experience.education }}</li>
+                <li><strong>Aktueller Beruf:</strong> {{ form.experience.currentJob }}</li>
+                <li><strong>Erfahrung:</strong> {{ form.experience.yearsExperience }} Jahre</li>
+            </ul>
+        </section>
+
+        <!-- Motivation -->
+        <section>
+            <h4 class="text-lg font-semibold text-primary mb-2">Motivation</h4>
+            <ul class="space-y-1 text-sm text-gray-800 dark:text-gray-200">
+                <li><strong>Stärken:</strong> {{ form.motivation.strengths }}</li>
+                <li><strong>Interesse am Berufsfeld:</strong> {{ form.motivation.whyThisField }}</li>
+            </ul>
+        </section>
+
+        <!-- Jobinfos (wenn nicht übersprungen) -->
+        <section v-if="!skipJobStep">
+            <h4 class="text-lg font-semibold text-primary mb-2">Stelleninformationen</h4>
+            <ul class="space-y-1 text-sm text-gray-800 dark:text-gray-200">
+                <li><strong>Unternehmen:</strong> {{ form.job.companyName }}</li>
+                <li><strong>Position:</strong> {{ form.job.position }}</li>
+                <li><strong>Pensum:</strong> {{ form.job.employmentType }}</li>
+            </ul>
+        </section>
         </div>
+
 
         <!-- Navigation -->
         <div class="flex justify-between mt-8">
