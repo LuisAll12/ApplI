@@ -25,6 +25,7 @@ const skipJobStep = !!jobTitle
 const step = ref(1)
 const maxStep = computed(() => skipJobStep ? 4 : 5)
 const hasSubmitted = ref(false)
+const submittedStep = ref(1)
 
 // const form = reactive({
 //     personal: {
@@ -79,11 +80,11 @@ const errors = reactive({
 })
 
 const statusMessage = computed(() => {
-    if (step.value === 1) return '🔍 Wir erfassen deine persönlichen Informationen...'
-    if (step.value === 2) return '🧠 Wir sammeln deine Ausbildung und Erfahrung...'
-    if (step.value === 3) return '💬 Erzähl uns etwas über deine Motivation...'
-    if (step.value === 4 && !skipJobStep) return '🏢 Jetzt zur Stelle, auf die du dich bewirbst...'
-    if (step.value === maxStep.value) return '🚀 Vorschau bereit – dein Bewerbungsschreiben wird generiert...'
+    if (submittedStep.value === 1) return 'Wir analysieren deie Benutzerdaten...'
+    if (submittedStep.value === 2) return `Wir analysieren und suchen Informationen über deie Traumstelle, (${form.job.companyName})...`
+    if (submittedStep.value === 3) return 'Wir erstellen mehrere Varianten deines Bewerbungsschreibens...'
+    if (submittedStep.value === 4 && !skipJobStep) return '🏢 Jetzt zur Stelle, auf die du dich bewirbst...'
+    if (submittedStep.value === maxStep.value) return '🚀 Vorschau bereit – dein Bewerbungsschreiben wird generiert...'
     return ''
 })
 
@@ -207,10 +208,16 @@ const validateCurrentStep = () => {
 
 
 async function CreateApplication(formData) {
+    submittedStep.value = 1
+    // wait 3.5 seconds
+    await new Promise(resolve => setTimeout(resolve, 3500))
+    submittedStep.value = 2
     const insights = await fetchCompanyInsights(formData.job.companyName)
-    console.log('Company Insights:', insights)
-//     const prompt = buildApplicationPrompt(formData, insights)
-//     const variants = await generateApplicationLetter(prompt)
+    await new Promise(resolve => setTimeout(resolve, 2500))
+    submittedStep.value = 3
+    const prompt = buildApplicationPrompt(formData, insights)
+    const variants = await generateApplicationLetter(prompt)
+    console.log('generated variants', variants)
 //     const formatted = formatPreview(variants)
 //     const resultPath = await exportToPDF(formatted)
 //     await optionallySendMail(formatted, formData)
@@ -227,6 +234,11 @@ const nextStep = () => {
 const prevStep = () => {
   if (step.value > 1) step.value--
 }
+
+const submittedProgress = computed(() => {
+    const maxSteps = 4
+    return `${(submittedStep.value / maxSteps) * 100}%`
+})
 </script>
 
 <template>
@@ -445,11 +457,12 @@ const prevStep = () => {
             <h2 class="text-3xl font-bold mb-4 text-primary">🎉 Danke, {{ form.personal.firstName }}!</h2>
             <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
                 Deine Angaben wurden erfolgreich übermittelt.<br />
-                Wir analysieren jetzt dein Zielunternehmen und generieren dein Bewerbungsschreiben.
+                {{ statusMessage }}
             </p>
             <div class="w-full max-w-md mx-auto mt-8">
                 <div class="w-full h-3 bg-gray-200 dark:bg-gray-dark-700 rounded-full overflow-hidden shadow-inner">
-                    <div class="h-full rounded-full bg-gradient-to-r from-primary to-primary-light animate-pulse" style="width: 100%;"></div>
+                    <div class="h-full rounded-full bg-gradient-to-r from-primary to-primary-light transition-all duration-500" :style="{ width: submittedProgress }">
+                        </div>
                 </div>
                 <p class="text-sm text-gray-500 mt-2 dark:text-gray-400">Dies kann einige Sekunden dauern...</p>
             </div>

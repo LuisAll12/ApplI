@@ -27,7 +27,7 @@ export function buildApplicationPrompt(userData, insights) {
 }
 
 export async function generateApplicationLetter(prompt) {
-    const response = await fetch('/api/groq', {
+    const response = await fetch(`${import.meta.env.VITE_APP_BACKEND_URL}/api/groq`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt })
