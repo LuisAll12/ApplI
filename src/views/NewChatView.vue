@@ -16,6 +16,7 @@ const skipJobStep = !!jobTitle
 
 const step = ref(1)
 const maxStep = computed(() => skipJobStep ? 4 : 5)
+const hasSubmitted = ref(false)
 
 // const form = reactive({
 //     personal: {
@@ -69,6 +70,15 @@ const errors = reactive({
     job: {}
 })
 
+const statusMessage = computed(() => {
+    if (step.value === 1) return '🔍 Wir erfassen deine persönlichen Informationen...'
+    if (step.value === 2) return '🧠 Wir sammeln deine Ausbildung und Erfahrung...'
+    if (step.value === 3) return '💬 Erzähl uns etwas über deine Motivation...'
+    if (step.value === 4 && !skipJobStep) return '🏢 Jetzt zur Stelle, auf die du dich bewirbst...'
+    if (step.value === maxStep.value) return '🚀 Vorschau bereit – dein Bewerbungsschreiben wird generiert...'
+    return ''
+})
+
 onMounted(() => {
     const saved = localStorage.getItem(STORAGE_KEY)
     if (saved) {
@@ -94,10 +104,31 @@ watch(step, (newStep) => {
 
 const submitForm = () => {
     if (!validateForm()) return
-    alert('Formular erfolgreich abgeschlossen!') // oder Weiterleitung:
-    // router.push('/vorschau') oder ein API Call
+    hasSubmitted.value = true
+
+    // Warten und dann z.B. zur Vorschau
+    setTimeout(() => {
+        router.push('/vorschau')  // oder ein API Call starten
+    }, 3000)
 }
 
+
+const validateForm = () => {
+    // Alle Schritte durchvalidieren
+    const currentStepBackup = step.value
+    let allValid = true
+
+    for (let i = 1; i <= maxStep.value; i++) {
+        step.value = i
+        if (!validateCurrentStep()) {
+        allValid = false
+        break
+        }
+    }
+
+    step.value = currentStepBackup
+    return allValid
+}
 
 const validateCurrentStep = () => {
   // nur Fehler für aktuellen Step prüfen
@@ -183,209 +214,224 @@ const prevStep = () => {
     <DarkToggle />
   </header>
     <div class="min-h-screen w-full p-6 bg-white text-gray-900 dark:bg-gray-dark-900 dark:text-white transition-colors">
-        
-        <h2 class="text-2xl font-bold mb-4">Bewerbung - Schritt {{ step }}</h2>
+        <div v-if="!hasSubmitted">
+            <h2 class="text-2xl font-bold mb-4">Bewerbung - Schritt {{ step }}</h2>
 
-        <!-- Step 1: Persönliches -->
-        <div v-if="step === 1" class="space-y-4">
-            <label class="block">
-                <span class="text-sm">Vorname</span>
-                <input
-                v-model="form.personal.firstName"
-                :class="['w-full mt-1 input', errors.personal.firstName && 'inputError']"
-                type="text"
-                />
-                <p v-if="errors.personal.firstName" class="text-red-500 text-sm mt-1">{{ errors.personal.firstName }}</p>
-            </label>
+            <!-- Step 1: Persönliches -->
+            <div v-if="step === 1" class="space-y-4">
+                <label class="block">
+                    <span class="text-sm">Vorname</span>
+                    <input
+                    v-model="form.personal.firstName"
+                    :class="['w-full mt-1 input', errors.personal.firstName && 'inputError']"
+                    type="text"
+                    />
+                    <p v-if="errors.personal.firstName" class="text-red-500 text-sm mt-1">{{ errors.personal.firstName }}</p>
+                </label>
 
-            <label class="block">
-                <span class="text-sm">Nachname</span>
-                <input
-                v-model="form.personal.lastName"
-                :class="['w-full mt-1 input', errors.personal.lastName && 'inputError']"
-                type="text"
-                />
-                <p v-if="errors.personal.lastName" class="text-red-500 text-sm mt-1">{{ errors.personal.lastName }}</p>
-            </label>
+                <label class="block">
+                    <span class="text-sm">Nachname</span>
+                    <input
+                    v-model="form.personal.lastName"
+                    :class="['w-full mt-1 input', errors.personal.lastName && 'inputError']"
+                    type="text"
+                    />
+                    <p v-if="errors.personal.lastName" class="text-red-500 text-sm mt-1">{{ errors.personal.lastName }}</p>
+                </label>
 
-            <label class="block">
-                <span class="text-sm">E-Mail</span>
-                <input
-                v-model="form.personal.email"
-                :class="['w-full mt-1 input', errors.personal.email && 'inputError']"
-                type="email"
-                />
-                <p v-if="errors.personal.email" class="text-red-500 text-sm mt-1">{{ errors.personal.email }}</p>
-            </label>
+                <label class="block">
+                    <span class="text-sm">E-Mail</span>
+                    <input
+                    v-model="form.personal.email"
+                    :class="['w-full mt-1 input', errors.personal.email && 'inputError']"
+                    type="email"
+                    />
+                    <p v-if="errors.personal.email" class="text-red-500 text-sm mt-1">{{ errors.personal.email }}</p>
+                </label>
 
-            <label class="block">
-                <span class="text-sm">Telefon</span>
-                <input
-                v-model="form.personal.phone"
-                :class="['w-full mt-1 input', errors.personal.phone && 'inputError']"
-                type="tel"
-                />
-                <p v-if="errors.personal.phone" class="text-red-500 text-sm mt-1">{{ errors.personal.phone }}</p>
-            </label>
-        </div>
-
-
-        <!-- Step 2: Ausbildung & Berufserfahrung -->
-        <div v-if="step === 2" class="space-y-4">
-            <label class="block">
-                <span class="text-sm">Ausbildung</span>
-                <input v-model="form.experience.education"
-                        :class="['w-full mt-1 input', errors.experience.education && 'inputError']"
-                        type="text" />
-                <p v-if="errors.experience.education" class="text-red-500 text-sm mt-1">{{ errors.experience.education }}</p>
-            </label>
-
-            <label class="block">
-                <span class="text-sm">Aktueller Beruf / Position</span>
-                <input v-model="form.experience.currentJob"
-                        :class="['w-full mt-1 input', errors.experience.currentJob && 'inputError']"
-                        type="text" />
-                <p v-if="errors.experience.currentJob" class="text-red-500 text-sm mt-1">{{ errors.experience.currentJob }}</p>
-            </label>
-
-            <label class="block">
-                <span class="text-sm">Berufserfahrung in Jahren</span>
-                <input v-model="form.experience.yearsExperience"
-                        :class="['w-full mt-1 input', errors.experience.yearsExperience && 'inputError']"
-                        type="number" />
-                <p v-if="errors.experience.yearsExperience" class="text-red-500 text-sm mt-1">{{ errors.experience.yearsExperience }}</p>
-            </label>
-        </div>
-
-        <div v-if="step === 3" class="space-y-4">
-            <label class="block">
-                <span class="text-sm">Was sind deine Stärken?</span>
-                <textarea v-model="form.motivation.strengths"
-                            :class="['w-full mt-1 input', errors.motivation.strengths && 'inputError']"
-                            rows="3"></textarea>
-                <p v-if="errors.motivation.strengths" class="text-red-500 text-sm mt-1">{{ errors.motivation.strengths }}</p>
-            </label>
-
-            <label class="block">
-                <span class="text-sm">Warum interessierst du dich für dieses Berufsfeld?</span>
-                <textarea v-model="form.motivation.whyThisField"
-                            :class="['w-full mt-1 input', errors.motivation.whyThisField && 'inputError']"
-                            rows="3"></textarea>
-                <p v-if="errors.motivation.whyThisField" class="text-red-500 text-sm mt-1">{{ errors.motivation.whyThisField }}</p>
-            </label>
-        </div>
-
-
-        <!-- Step 4: Zielunternehmen & Stelle -->
-        <div v-if="step === 4 && !skipJobStep" class="space-y-4">
-            <label class="block">
-                <span class="text-sm">Unternehmen</span>
-                <input v-model="form.job.companyName"
-                        :class="['w-full mt-1 input', errors.job.companyName && 'inputError']"
-                        type="text" />
-                <p v-if="errors.job.companyName" class="text-red-500 text-sm mt-1">{{ errors.job.companyName }}</p>
-            </label>
-
-            <label class="block">
-                <span class="text-sm">Stellenbezeichnung</span>
-                <input v-model="form.job.position"
-                        :class="['w-full mt-1 input', errors.job.position && 'inputError']"
-                        type="text" />
-                <p v-if="errors.job.position" class="text-error text-sm mt-1">{{ errors.job.position }}</p>
-            </label>
-
-            <label class="block">
-                <span class="text-sm">Pensum (in %)</span>
-                <input v-model="form.job.employmentType"
-                        :class="['w-full mt-1 input', errors.job.employmentType && 'inputError']"
-                        type="text" />
-                <p v-if="errors.job.employmentType" class="text-red-500 text-sm mt-1">{{ errors.job.employmentType }}</p>
-            </label>
-        </div>  
-
-
-        <!-- Step 5: Zusammenfassung -->
-        <div v-if="step === maxStep" class="relative flex flex-col lg:flex-row justify-between items-start min-h-[600px] overflow-hidden">
-
-            <!-- 🔵 Dekorative Kreise im Hintergrund (z-index 0) -->
-            <div class="absolute top-[-170px] right-[-150px] w-[700px] h-[700px] z-0 pointer-events-none">
-                <div class="absolute w-full h-full rounded-full bg-gradient-to-br from-primary to-primary-light opacity-70"></div>
-                <div class="absolute top-[80px] right-[80px] w-[500px] h-[500px] rounded-full bg-gradient-to-br from-primary-light to-secondary opacity-60"></div>
+                <label class="block">
+                    <span class="text-sm">Telefon</span>
+                    <input
+                    v-model="form.personal.phone"
+                    :class="['w-full mt-1 input', errors.personal.phone && 'inputError']"
+                    type="tel"
+                    />
+                    <p v-if="errors.personal.phone" class="text-red-500 text-sm mt-1">{{ errors.personal.phone }}</p>
+                </label>
             </div>
 
-            <!-- 📱 Phone-Mockup separat -->
-            <div class="absolute top-[20px] right-[80px] z-10 hidden lg:block">
-                <img :src="phoneMockup" alt="Phone Mockup" class="w-[280px] lg:w-[320px] drop-shadow-2xl" />
+
+            <!-- Step 2: Ausbildung & Berufserfahrung -->
+            <div v-if="step === 2" class="space-y-4">
+                <label class="block">
+                    <span class="text-sm">Ausbildung</span>
+                    <input v-model="form.experience.education"
+                            :class="['w-full mt-1 input', errors.experience.education && 'inputError']"
+                            type="text" />
+                    <p v-if="errors.experience.education" class="text-red-500 text-sm mt-1">{{ errors.experience.education }}</p>
+                </label>
+
+                <label class="block">
+                    <span class="text-sm">Aktueller Beruf / Position</span>
+                    <input v-model="form.experience.currentJob"
+                            :class="['w-full mt-1 input', errors.experience.currentJob && 'inputError']"
+                            type="text" />
+                    <p v-if="errors.experience.currentJob" class="text-red-500 text-sm mt-1">{{ errors.experience.currentJob }}</p>
+                </label>
+
+                <label class="block">
+                    <span class="text-sm">Berufserfahrung in Jahren</span>
+                    <input v-model="form.experience.yearsExperience"
+                            :class="['w-full mt-1 input', errors.experience.yearsExperience && 'inputError']"
+                            type="number" />
+                    <p v-if="errors.experience.yearsExperience" class="text-red-500 text-sm mt-1">{{ errors.experience.yearsExperience }}</p>
+                </label>
             </div>
-            <div class="z-10 w-full lg:w-2/3 space-y-6">
-                <h3 class="text-2xl font-semibold">Zusammenfassung</h3>
 
-                <!-- Persönliches -->
-                <section>
-                    <h4 class="text-lg font-semibold text-primary mb-2">Persönliche Angaben</h4>
-                    <ul class="space-y-1 text-sm text-gray-800 dark:text-gray-200">
-                        <li><strong>Vorname:</strong> {{ form.personal.firstName }}</li>
-                        <li><strong>Nachname:</strong> {{ form.personal.lastName }}</li>
-                        <li><strong>E-Mail:</strong> {{ form.personal.email }}</li>
-                        <li><strong>Telefon:</strong> {{ form.personal.phone }}</li>
-                    </ul>
-                </section>
+            <div v-if="step === 3" class="space-y-4">
+                <label class="block">
+                    <span class="text-sm">Was sind deine Stärken?</span>
+                    <textarea v-model="form.motivation.strengths"
+                                :class="['w-full mt-1 input', errors.motivation.strengths && 'inputError']"
+                                rows="3"></textarea>
+                    <p v-if="errors.motivation.strengths" class="text-red-500 text-sm mt-1">{{ errors.motivation.strengths }}</p>
+                </label>
 
-                <!-- Berufserfahrung -->
-                <section>
-                    <h4 class="text-lg font-semibold text-primary mb-2">Ausbildung & Beruf</h4>
-                    <ul class="space-y-1 text-sm text-gray-800 dark:text-gray-200">
-                        <li><strong>Ausbildung:</strong> {{ form.experience.education }}</li>
-                        <li><strong>Aktueller Beruf:</strong> {{ form.experience.currentJob }}</li>
-                        <li><strong>Erfahrung:</strong> {{ form.experience.yearsExperience }} Jahre</li>
-                    </ul>
-                </section>
+                <label class="block">
+                    <span class="text-sm">Warum interessierst du dich für dieses Berufsfeld?</span>
+                    <textarea v-model="form.motivation.whyThisField"
+                                :class="['w-full mt-1 input', errors.motivation.whyThisField && 'inputError']"
+                                rows="3"></textarea>
+                    <p v-if="errors.motivation.whyThisField" class="text-red-500 text-sm mt-1">{{ errors.motivation.whyThisField }}</p>
+                </label>
+            </div>
 
-                <!-- Motivation -->
-                <section>
-                    <h4 class="text-lg font-semibold text-primary mb-2">Motivation</h4>
-                    <ul class="space-y-1 text-sm text-gray-800 dark:text-gray-200">
-                        <li><strong>Stärken:</strong> {{ form.motivation.strengths }}</li>
-                        <li><strong>Interesse am Berufsfeld:</strong> {{ form.motivation.whyThisField }}</li>
-                    </ul>
-                </section>
 
-                <!-- Jobinfos (wenn nicht übersprungen) -->
-                <section v-if="!skipJobStep">
-                    <h4 class="text-lg font-semibold text-primary mb-2">Stelleninformationen</h4>
-                    <ul class="space-y-1 text-sm text-gray-800 dark:text-gray-200">
-                        <li><strong>Unternehmen:</strong> {{ form.job.companyName }}</li>
-                        <li><strong>Position:</strong> {{ form.job.position }}</li>
-                        <li><strong>Pensum:</strong> {{ form.job.employmentType }}</li>
-                    </ul>
-                </section>
+            <!-- Step 4: Zielunternehmen & Stelle -->
+            <div v-if="step === 4 && !skipJobStep" class="space-y-4">
+                <label class="block">
+                    <span class="text-sm">Unternehmen</span>
+                    <input v-model="form.job.companyName"
+                            :class="['w-full mt-1 input', errors.job.companyName && 'inputError']"
+                            type="text" />
+                    <p v-if="errors.job.companyName" class="text-red-500 text-sm mt-1">{{ errors.job.companyName }}</p>
+                </label>
+
+                <label class="block">
+                    <span class="text-sm">Stellenbezeichnung</span>
+                    <input v-model="form.job.position"
+                            :class="['w-full mt-1 input', errors.job.position && 'inputError']"
+                            type="text" />
+                    <p v-if="errors.job.position" class="text-error text-sm mt-1">{{ errors.job.position }}</p>
+                </label>
+
+                <label class="block">
+                    <span class="text-sm">Pensum (in %)</span>
+                    <input v-model="form.job.employmentType"
+                            :class="['w-full mt-1 input', errors.job.employmentType && 'inputError']"
+                            type="text" />
+                    <p v-if="errors.job.employmentType" class="text-red-500 text-sm mt-1">{{ errors.job.employmentType }}</p>
+                </label>
+            </div>  
+
+
+            <!-- Step 5: Zusammenfassung -->
+            <div v-if="step === maxStep" class="relative flex flex-col lg:flex-row justify-between items-start min-h-[600px] overflow-hidden">
+
+                <!-- 🔵 Dekorative Kreise im Hintergrund (z-index 0) -->
+                <div class="absolute top-[-170px] right-[-150px] w-[700px] h-[700px] z-0 pointer-events-none">
+                    <div class="absolute w-full h-full rounded-full bg-gradient-to-br from-primary to-primary-light opacity-70"></div>
+                    <div class="absolute top-[80px] right-[80px] w-[500px] h-[500px] rounded-full bg-gradient-to-br from-primary-light to-secondary opacity-60"></div>
+                </div>
+
+                <!-- 📱 Phone-Mockup separat -->
+                <div class="absolute top-[20px] right-[80px] z-10 hidden lg:block">
+                    <img :src="phoneMockup" alt="Phone Mockup" class="w-[280px] lg:w-[320px] drop-shadow-2xl" />
+                </div>
+                <div class="z-10 w-full lg:w-2/3 space-y-6">
+                    <h3 class="text-2xl font-semibold">Zusammenfassung</h3>
+
+                    <!-- Persönliches -->
+                    <section>
+                        <h4 class="text-lg font-semibold text-primary mb-2">Persönliche Angaben</h4>
+                        <ul class="space-y-1 text-sm text-gray-800 dark:text-gray-200">
+                            <li><strong>Vorname:</strong> {{ form.personal.firstName }}</li>
+                            <li><strong>Nachname:</strong> {{ form.personal.lastName }}</li>
+                            <li><strong>E-Mail:</strong> {{ form.personal.email }}</li>
+                            <li><strong>Telefon:</strong> {{ form.personal.phone }}</li>
+                        </ul>
+                    </section>
+
+                    <!-- Berufserfahrung -->
+                    <section>
+                        <h4 class="text-lg font-semibold text-primary mb-2">Ausbildung & Beruf</h4>
+                        <ul class="space-y-1 text-sm text-gray-800 dark:text-gray-200">
+                            <li><strong>Ausbildung:</strong> {{ form.experience.education }}</li>
+                            <li><strong>Aktueller Beruf:</strong> {{ form.experience.currentJob }}</li>
+                            <li><strong>Erfahrung:</strong> {{ form.experience.yearsExperience }} Jahre</li>
+                        </ul>
+                    </section>
+
+                    <!-- Motivation -->
+                    <section>
+                        <h4 class="text-lg font-semibold text-primary mb-2">Motivation</h4>
+                        <ul class="space-y-1 text-sm text-gray-800 dark:text-gray-200">
+                            <li><strong>Stärken:</strong> {{ form.motivation.strengths }}</li>
+                            <li><strong>Interesse am Berufsfeld:</strong> {{ form.motivation.whyThisField }}</li>
+                        </ul>
+                    </section>
+
+                    <!-- Jobinfos (wenn nicht übersprungen) -->
+                    <section v-if="!skipJobStep">
+                        <h4 class="text-lg font-semibold text-primary mb-2">Stelleninformationen</h4>
+                        <ul class="space-y-1 text-sm text-gray-800 dark:text-gray-200">
+                            <li><strong>Unternehmen:</strong> {{ form.job.companyName }}</li>
+                            <li><strong>Position:</strong> {{ form.job.position }}</li>
+                            <li><strong>Pensum:</strong> {{ form.job.employmentType }}</li>
+                        </ul>
+                    </section>
+                </div>
+            </div>
+
+
+            <!-- Navigation -->
+            <div class="flex justify-between mt-8">
+                <!-- Zurück-Button -->
+                <button
+                    @click="prevStep"
+                    :disabled="step === 1"
+                    class="flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition
+                        bg-gray-400 dark:bg-gray-dark-400 text-white 
+                        hover:bg-gray-500 dark:hover:bg-gray-dark-300
+                        disabled:opacity-50 disabled:cursor-not-allowed">
+                    <ArrowLeftIcon class="w-5 h-5" />
+                    Zurück
+                </button>
+
+                <!-- Weiter/Abschliessen-Button -->
+                <button
+                    @click="step < maxStep ? nextStep() : (validateForm() && submitForm())"
+                    class="flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition 
+                        bg-primary hover:bg-primary-light 
+                        text-white shadow-md">
+                    <component :is="step < maxStep ? ArrowRightIcon : CheckIcon" class="w-5 h-5" />
+                    {{ step < maxStep ? 'Weiter' : 'Bewerbungsschreiben erstellen' }}
+                </button>
             </div>
         </div>
-
-
-        <!-- Navigation -->
-        <div class="flex justify-between mt-8">
-            <!-- Zurück-Button -->
-            <button
-                @click="prevStep"
-                :disabled="step === 1"
-                class="flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition
-                    bg-gray-400 dark:bg-gray-dark-400 text-white 
-                    hover:bg-gray-500 dark:hover:bg-gray-dark-300
-                    disabled:opacity-50 disabled:cursor-not-allowed">
-                <ArrowLeftIcon class="w-5 h-5" />
-                Zurück
-            </button>
-
-            <!-- Weiter/Abschliessen-Button -->
-            <button
-                @click="step < maxStep ? nextStep() : (validateForm() && submitForm())"
-                class="flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition 
-                    bg-primary hover:bg-primary-light 
-                    text-white shadow-md">
-                <component :is="step < maxStep ? ArrowRightIcon : CheckIcon" class="w-5 h-5" />
-                {{ step < maxStep ? 'Weiter' : 'Bewerbungsschreiben erstellen' }}
-            </button>
+            <!-- statusMessage -->      
+        <div v-else class="text-center py-24">
+            <h2 class="text-3xl font-bold mb-4 text-primary">🎉 Danke, {{ form.personal.firstName }}!</h2>
+            <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+                Deine Angaben wurden erfolgreich übermittelt.<br />
+                Wir analysieren jetzt dein Zielunternehmen und generieren dein Bewerbungsschreiben.
+            </p>
+            <div class="w-full max-w-md mx-auto mt-8">
+                <div class="w-full h-3 bg-gray-200 dark:bg-gray-dark-700 rounded-full overflow-hidden shadow-inner">
+                    <div class="h-full rounded-full bg-gradient-to-r from-primary to-primary-light animate-pulse" style="width: 100%;"></div>
+                </div>
+                <p class="text-sm text-gray-500 mt-2 dark:text-gray-400">Dies kann einige Sekunden dauern...</p>
+            </div>
         </div>
     </div>
 </template>
