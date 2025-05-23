@@ -25,4 +25,9 @@ data
 *.ntvs*
 *.njsproj
 *.sln
-*.sw?
+*.sw
+
+.env
+*.env
+./env
+env

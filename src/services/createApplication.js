@@ -1,5 +1,5 @@
 export async function fetchCompanyInsights(companyName) {
-    const res = await fetch('/api/company-insights', {
+    const res = await fetch(`${import.meta.env.VITE_APP_BACKEND_URL}/api/company-insights`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ companyName })
