@@ -36,6 +36,82 @@ const form = reactive({
   }
 })
 
+const errors = reactive({
+  personal: {},
+  experience: {},
+  motivation: {},
+  job: {}
+})
+
+
+
+const validateForm = () => {
+  // Reset errors
+  Object.keys(errors).forEach(key => errors[key] = {})
+
+  let valid = true
+
+  // Persönliche Daten
+  if (!form.personal.firstName) {
+    errors.personal.firstName = 'Vorname ist erforderlich'
+    valid = false
+  }
+  if (!form.personal.lastName) {
+    errors.personal.lastName = 'Nachname ist erforderlich'
+    valid = false
+  }
+  if (!form.personal.email) {
+    errors.personal.email = 'E-Mail ist erforderlich'
+    valid = false
+  }
+  if (!form.personal.phone) {
+    errors.personal.phone = 'Telefonnummer ist erforderlich'
+    valid = false
+  }
+
+  // Erfahrung
+  if (!form.experience.education) {
+    errors.experience.education = 'Ausbildung ist erforderlich'
+    valid = false
+  }
+  if (!form.experience.currentJob) {
+    errors.experience.currentJob = 'Aktueller Beruf ist erforderlich'
+    valid = false
+  }
+  if (!form.experience.yearsExperience) {
+    errors.experience.yearsExperience = 'Erfahrung ist erforderlich'
+    valid = false
+  }
+
+  // Motivation
+  if (!form.motivation.strengths) {
+    errors.motivation.strengths = 'Stärken müssen angegeben werden'
+    valid = false
+  }
+  if (!form.motivation.whyThisField) {
+    errors.motivation.whyThisField = 'Motivation ist erforderlich'
+    valid = false
+  }
+
+  // Jobdaten nur wenn nicht übersprungen
+  if (!skipJobStep) {
+    if (!form.job.companyName) {
+      errors.job.companyName = 'Unternehmen fehlt'
+      valid = false
+    }
+    if (!form.job.position) {
+      errors.job.position = 'Position fehlt'
+      valid = false
+    }
+    if (!form.job.employmentType) {
+      errors.job.employmentType = 'Pensum fehlt'
+      valid = false
+    }
+  }
+
+  return valid
+}
+
 const nextStep = () => {
   if (step.value < maxStep.value) step.value++
 }
@@ -57,22 +133,23 @@ const prevStep = () => {
 
         <!-- Step 1: Persönliches -->
         <div v-if="step === 1" class="space-y-4">
-        <label class="block">
-            <span class="text-sm">Vorname</span>
-            <input v-model="form.personal.firstName" type="text" class="w-full mt-1 input" />
-        </label>
-        <label class="block">
-            <span class="text-sm">Nachname</span>
-            <input v-model="form.personal.lastName" type="text" class="w-full mt-1 input" />
-        </label>
-        <label class="block">
-            <span class="text-sm">E-Mail</span>
-            <input v-model="form.personal.email" type="email" class="w-full mt-1 input" />
-        </label>
-        <label class="block">
-            <span class="text-sm">Telefon</span>
-            <input v-model="form.personal.phone" type="tel" class="w-full mt-1 input" />
-        </label>
+            <label class="block">
+                <span class="text-sm">Vorname</span>
+                <input v-model="form.personal.firstName" type="text" class="w-full mt-1 input" />
+                <p v-if="errors.personal.firstName" class="text-red-500 text-sm mt-1">{{ errors.personal.firstName }}</p>
+            </label>
+            <label class="block">
+                <span class="text-sm">Nachname</span>
+                <input v-model="form.personal.lastName" type="text" class="w-full mt-1 input" />
+            </label>
+            <label class="block">
+                <span class="text-sm">E-Mail</span>
+                <input v-model="form.personal.email" type="email" class="w-full mt-1 input" />
+            </label>
+            <label class="block">
+                <span class="text-sm">Telefon</span>
+                <input v-model="form.personal.phone" type="tel" class="w-full mt-1 input" />
+            </label>
         </div>
 
             <!-- Step 2: Ausbildung & Berufserfahrung -->
