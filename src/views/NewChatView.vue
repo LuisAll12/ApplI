@@ -1,12 +1,13 @@
 <script setup>
 import { ref, reactive, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useDarkMode } from '../composables/useDarkMode.js'
+import DarkToggle from '../components/DarkToggle.vue'
 import { ArrowLeftIcon, ArrowRightIcon, CheckIcon } from '@heroicons/vue/24/solid'
 import phoneMockup from '../assets/images/phone-mockup.png'
 
 const route = useRoute()
-const router = useRoute()
+const router = useRouter()
 const { dark, toggleDark } = useDarkMode()
 const jobTitle = route.query.title || null
 const skipJobStep = !!jobTitle
@@ -152,12 +153,10 @@ const prevStep = () => {
 </script>
 
 <template>
-    <header class="flex justify-between items-center px-6 py-4 bg-white dark:bg-gray-dark-700 border-b dark:border-gray-dark-500">
-        <h1 @click="router.push('/')" class="text-2xl font-bold text-primary">ApplI</h1>
-        <button @click="toggleDark" class="text-xl">
-        {{ dark ? '☀️' : '🌙' }}
-    </button>
-    </header>
+  <header class="flex justify-between items-center px-6 py-4 bg-white dark:bg-gray-dark-700 border-b dark:border-gray-dark-500">
+    <h1 @click="router.push('/')" class="text-2xl font-bold text-primary cursor-pointer">ApplI</h1>
+    <DarkToggle />
+  </header>
     <div class="min-h-screen w-full p-6 bg-white text-gray-900 dark:bg-gray-dark-900 dark:text-white transition-colors">
         
         <h2 class="text-2xl font-bold mb-4">Bewerbung - Schritt {{ step }}</h2>
@@ -360,7 +359,7 @@ const prevStep = () => {
                     bg-primary hover:bg-primary-light 
                     text-white shadow-md">
                 <component :is="step < maxStep ? ArrowRightIcon : CheckIcon" class="w-5 h-5" />
-                {{ step < maxStep ? 'Weiter' : 'Abschliessen' }}
+                {{ step < maxStep ? 'Weiter' : 'Bewerbungsschreiben erstellen' }}
             </button>
         </div>
     </div>
