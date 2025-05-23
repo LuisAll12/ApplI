@@ -1,12 +1,13 @@
 export async function fetchCompanyInsights(companyName) {
-  // Hier würdest du Groq oder eine andere API abfragen
-  // Beispiel: await fetchGroqInsights(companyName)
-    return {
-        mission: 'Wir digitalisieren die Finanzwelt',
-        values: ['Innovation', 'Transparenz'],
-        technologies: ['Vue.js', 'Kubernetes'],
-        keyPoints: ['Junge Teams', 'Agiles Arbeiten']
-    }
+    const res = await fetch('/api/company-insights', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ companyName })
+    })
+
+    if (!res.ok) throw new Error('Fehler bei der Unternehmensanalyse')
+
+    return await res.json()
 }
 
 export function buildApplicationPrompt(userData, insights) {

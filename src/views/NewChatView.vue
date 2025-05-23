@@ -5,6 +5,14 @@ import { useDarkMode } from '../composables/useDarkMode.js'
 import DarkToggle from '../components/DarkToggle.vue'
 import { ArrowLeftIcon, ArrowRightIcon, CheckIcon } from '@heroicons/vue/24/solid'
 import phoneMockup from '../assets/images/phone-mockup.png'
+import {
+    fetchCompanyInsights, 
+    buildApplicationPrompt, 
+    generateApplicationLetter,
+    formatPreview, 
+    exportToPDF, 
+    optionallySendMail
+} from '../services/createApplication.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -200,13 +208,14 @@ const validateCurrentStep = () => {
 
 async function CreateApplication(formData) {
     const insights = await fetchCompanyInsights(formData.job.companyName)
-    const prompt = buildApplicationPrompt(formData, insights)
-    const variants = await generateApplicationLetter(prompt)
-    const formatted = formatPreview(variants)
-    const resultPath = await exportToPDF(formatted)
-    await optionallySendMail(formatted, formData)
-    await storeInHistory(formData, formatted)
-    return { variants, resultPath }
+    console.log('Company Insights:', insights)
+//     const prompt = buildApplicationPrompt(formData, insights)
+//     const variants = await generateApplicationLetter(prompt)
+//     const formatted = formatPreview(variants)
+//     const resultPath = await exportToPDF(formatted)
+//     await optionallySendMail(formatted, formData)
+//     await storeInHistory(formData, formatted)
+//     return { variants, resultPath }
 }
 
 const nextStep = () => {
