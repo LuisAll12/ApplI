@@ -106,10 +106,8 @@ const submitForm = () => {
     if (!validateForm()) return
     hasSubmitted.value = true
 
-    // Warten und dann z.B. zur Vorschau
-    setTimeout(() => {
-        router.push('/vorschau')  // oder ein API Call starten
-    }, 3000)
+    // Hier wird die Bewerbung erstellt
+    CreateApplication(form)
 }
 
 
@@ -198,10 +196,24 @@ const validateCurrentStep = () => {
     return valid
 }
 
+
+
+async function CreateApplication(formData) {
+    const insights = await fetchCompanyInsights(formData.job.companyName)
+    const prompt = buildApplicationPrompt(formData, insights)
+    const variants = await generateApplicationLetter(prompt)
+    const formatted = formatPreview(variants)
+    const resultPath = await exportToPDF(formatted)
+    await optionallySendMail(formatted, formData)
+    await storeInHistory(formData, formatted)
+    return { variants, resultPath }
+}
+
 const nextStep = () => {
     if (step.value === maxStep.value) return
     const currentStepValid = validateCurrentStep()
     if (currentStepValid) step.value++
+
 }
 const prevStep = () => {
   if (step.value > 1) step.value--
