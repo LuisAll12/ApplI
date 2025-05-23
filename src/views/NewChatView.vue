@@ -9,6 +9,7 @@ import phoneMockup from '../assets/images/phone-mockup.png'
 const route = useRoute()
 const router = useRouter()
 const STORAGE_KEY = 'bewerbungsForm'
+const STEP_KEY = 'bewerbungsFormStep'
 
 const jobTitle = route.query.title || null
 const skipJobStep = !!jobTitle
@@ -16,50 +17,50 @@ const skipJobStep = !!jobTitle
 const step = ref(1)
 const maxStep = computed(() => skipJobStep ? 4 : 5)
 
-const form = reactive({
-    personal: {
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-    },
-    experience: {
-        education: '',
-        currentJob: '',
-        yearsExperience: ''
-    },
-    motivation: {
-        strengths: '',
-        whyThisField: '',
-    },
-    job: {
-        companyName: jobTitle || '',
-        position: '',
-        employmentType: '100%',
-    }
-})
 // const form = reactive({
 //     personal: {
-//         firstName: 'Luis',
-//         lastName: 'Allamand',
-//         email: 'luis@g-12.ch',
-//         phone: '0783123399',
+//         firstName: '',
+//         lastName: '',
+//         email: '',
+//         phone: '',
 //     },
 //     experience: {
-//         education: 'Applikationsentwickler EFZ mit Berufsmatur',
-//         currentJob: 'Informatikmitelschule',
-//         yearsExperience: '2'
+//         education: '',
+//         currentJob: '',
+//         yearsExperience: ''
 //     },
 //     motivation: {
-//         strengths: 'Mathe und Informatik',
-//         whyThisField: 'Es macht mir Spass und ich kann meine Stärken einsetzen',
+//         strengths: '',
+//         whyThisField: '',
 //     },
 //     job: {
-//         companyName: jobTitle || 'UBS Group AG',
-//         position: 'Informatiker',
+//         companyName: jobTitle || '',
+//         position: '',
 //         employmentType: '100%',
 //     }
 // })
+const form = reactive({
+    personal: {
+        firstName: 'Luis',
+        lastName: 'Allamand',
+        email: 'luis@g-12.ch',
+        phone: '0783123399',
+    },
+    experience: {
+        education: 'Applikationsentwickler EFZ mit Berufsmatur',
+        currentJob: 'Informatikmitelschule',
+        yearsExperience: '2'
+    },
+    motivation: {
+        strengths: 'Mathe und Informatik',
+        whyThisField: 'Es macht mir Spass und ich kann meine Stärken einsetzen',
+    },
+    job: {
+        companyName: jobTitle || 'UBS Group AG',
+        position: 'Informatiker',
+        employmentType: '100%',
+    }
+})
 
 const errors = reactive({
     personal: {},
@@ -77,10 +78,19 @@ onMounted(() => {
         Object.assign(form.motivation, parsed.motivation || {})
         Object.assign(form.job, parsed.job || {})
     }
+
+    const savedStep = localStorage.getItem(STEP_KEY)
+    if (savedStep) {
+        const parsedStep = parseInt(savedStep)
+        if (!isNaN(parsedStep)) step.value = parsedStep
+    }
 })
 watch(form, (newVal) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newVal))
 }, { deep: true })
+watch(step, (newStep) => {
+    localStorage.setItem(STEP_KEY, newStep.toString())
+})
 
 const submitForm = () => {
     if (!validateForm()) return
