@@ -1,8 +1,12 @@
 <script setup>
 import { ref, reactive, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { useDarkMode } from '../composables/useDarkMode.js'
+import { ArrowLeftIcon, ArrowRightIcon, CheckIcon } from '@heroicons/vue/24/solid'
 
 const route = useRoute()
+const router = useRoute()
+const { dark, toggleDark } = useDarkMode()
 const jobTitle = route.query.title || null
 const skipJobStep = !!jobTitle
 
@@ -41,7 +45,14 @@ const prevStep = () => {
 </script>
 
 <template>
-    <div class="min-h-screen w-full p-6 text-white" style="background-color: #101721;">
+    <header class="flex justify-between items-center px-6 py-4 bg-white dark:bg-gray-dark-700 border-b dark:border-gray-dark-500">
+        <h1 @click="router.push('/')" class="text-2xl font-bold text-primary">ApplI</h1>
+        <button @click="toggleDark" class="text-xl">
+        {{ dark ? '☀️' : '🌙' }}
+    </button>
+    </header>
+    <div class="min-h-screen w-full p-6 bg-white text-gray-900 dark:bg-gray-dark-900 dark:text-white transition-colors">
+        
         <h2 class="text-2xl font-bold mb-4">Bewerbung - Schritt {{ step }}</h2>
 
         <!-- Step 1: Persönliches -->
@@ -117,9 +128,26 @@ const prevStep = () => {
         </div>
 
         <!-- Navigation -->
-        <div class="flex justify-between mt-6">
-            <button @click="prevStep" :disabled="step === 1" class="btn">Zurück</button>
-            <button @click="step < maxStep ? nextStep() : submitForm()" class="btn">
+        <div class="flex justify-between mt-8">
+            <!-- Zurück-Button -->
+            <button
+                @click="prevStep"
+                :disabled="step === 1"
+                class="flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition
+                    bg-gray-400 dark:bg-gray-dark-400 text-white 
+                    hover:bg-gray-500 dark:hover:bg-gray-dark-300
+                    disabled:opacity-50 disabled:cursor-not-allowed">
+                <ArrowLeftIcon class="w-5 h-5" />
+                Zurück
+            </button>
+
+            <!-- Weiter/Abschliessen-Button -->
+            <button
+                @click="step < maxStep ? nextStep() : submitForm()"
+                class="flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition 
+                    bg-primary hover:bg-primary-light 
+                    text-white shadow-md">
+                <component :is="step < maxStep ? ArrowRightIcon : CheckIcon" class="w-5 h-5" />
                 {{ step < maxStep ? 'Weiter' : 'Abschliessen' }}
             </button>
         </div>
@@ -128,9 +156,10 @@ const prevStep = () => {
 
 <style scoped lang="scss">
 .input {
-  @apply border border-gray-700 rounded-md px-3 py-2 bg-[#161a25] text-white;
-}
-.btn {
-  @apply bg-primary text-white px-4 py-2 rounded hover:bg-primary-light transition;
+    @apply border border-gray-300 dark:border-gray-700 
+            rounded-md px-3 py-2 
+            bg-gray-100 dark:bg-gray-dark-600 
+            text-gray-900 dark:text-white 
+            placeholder-gray-500 dark:placeholder-gray-light-300;
 }
 </style>
