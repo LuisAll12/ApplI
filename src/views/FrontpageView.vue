@@ -1,5 +1,8 @@
 <script setup>
 import { useDarkMode } from '../composables/useDarkMode.js'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const { dark, toggleDark } = useDarkMode()
 </script>
@@ -22,7 +25,7 @@ const { dark, toggleDark } = useDarkMode()
                 Sende, erhalte und toppe deine Bewerbung direkt auf dein Zielunternehmen ab. Intelligente Texte, automatisch formuliert.
             </p>
             <div class="flex gap-4 flex-wrap">
-                <button class="bg-primary text-white font-semibold px-6 py-3 rounded-lg hover:bg-primaryLight transition">Jetzt starten</button>
+                <button @click="router.push('/chat')" class="bg-primary text-white font-semibold px-6 py-3 rounded-lg hover:bg-primaryLight transition">Jetzt starten</button>
                 <button class="border border-primary text-primary px-6 py-3 rounded-lg hover:bg-primary/10 transition">Mehr erfahren</button>
             </div>
             </div>

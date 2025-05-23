@@ -1,0 +1,86 @@
+<template>
+  <div class="p-6 bg-[#181c28] min-h-screen text-white space-y-4">
+    <!-- Zurück-Button -->
+    <button @click="goBack" class="flex items-center gap-2 text-sm text-[#99a4b8] hover:text-white">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      Zurück
+    </button>
+
+    <h2 class="text-2xl font-bold text-primary">Job Suche</h2>
+
+    <div class="flex flex-col md:flex-row gap-4">
+      <input v-model="searchParams.what" placeholder="Beruf (z.B. Entwickler)"  class="p-2 rounded-md bg-[#252837] text-white placeholder-[#99a4b8] w-full" />
+      <input v-model="searchParams.where" placeholder="Ort (z.B. Zürich)" class="p-2 rounded-md bg-[#252837] text-white placeholder-[#99a4b8] w-full" />
+      <button @click="searchJobs" class="bg-primary hover:bg-[#8d6eef] text-white font-semibold py-2 px-4 rounded-md">Suchen</button>
+    </div>
+
+    <div v-if="loading">Lade Jobs...</div>
+
+    <ul v-if="jobs.length" class="space-y-2">
+      <li v-for="job in jobs" :key="job.id" class="p-4 bg-[#252837] rounded-md hover:bg-[#2f3646] space-y-1">
+        <h3 class="text-lg font-semibold">{{ job.title }}</h3>
+        <p>{{ job.company.display_name }} – {{ job.location.display_name }}</p>
+        <a :href="job.redirect_url" target="_blank" class="text-secondary underline">Zum Job</a>
+        <div class="pt-2">
+          <button @click="startChat(job)" class="bg-secondary hover:bg-[#58cae7] text-black font-semibold py-1 px-3 rounded-md">
+            Chat starten
+          </button>
+        </div>
+      </li>
+    </ul>
+
+    <div v-else-if="!loading">Keine Jobs gefunden.</div>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+import axios from 'axios'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const searchParams = ref({
+  what: '',
+  where: '',
+})
+
+const jobs = ref([])
+const loading = ref(false)
+
+const goBack = () => {
+  router.back()
+}
+
+const searchJobs = async () => {
+  loading.value = true
+  try {
+    const response = await axios.get('http://localhost:3000/api/jobs/search', {
+        params: {
+            what: searchParams.value.what,
+            where: searchParams.value.where,
+        }
+    })
+    jobs.value = response.data.results
+  } catch (err) {
+    console.error('Fehler beim Laden:', err)
+  } finally {
+    loading.value = false
+  }
+}
+
+// 🟣 Chat starten mit Job-Inserat
+const startChat = (job) => {
+  router.push({
+    name: 'NewChat',
+    query: {
+      title: job.title,
+      company: job.company.display_name,
+      location: job.location.display_name,
+      url: job.redirect_url
+    }
+  })
+}
+</script>

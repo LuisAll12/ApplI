@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/FrontpageView.vue'
 import Chat from '../views/ChatView.vue'
+import JobSearch from '../components/Chat/JobSearch.vue'
 
 
 // Example route components (replace with your actual components)
@@ -15,6 +16,11 @@ const routes = [
         path: '/chat',
         name: 'Chat',
         component: Chat
+    },
+    {
+        path: '/job-search',
+        name: 'JobSearch',
+        component: JobSearch
     }
 ]
 
