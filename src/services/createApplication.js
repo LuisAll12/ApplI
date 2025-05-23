@@ -58,7 +58,7 @@ export async function exportToPDF(formattedLetters) {
     })
     const { filePath } = await res.json()
     return filePath
-    }
+}
 
 export async function optionallySendMail(letter, formData) {
     if (!formData.sendMail) return

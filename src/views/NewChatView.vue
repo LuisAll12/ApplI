@@ -18,6 +18,8 @@ const route = useRoute()
 const router = useRouter()
 const STORAGE_KEY = 'bewerbungsForm'
 const STEP_KEY = 'bewerbungsFormStep'
+const SUBMITTED_STEP_KEY = 'submittedStep'
+const PREVIEWS_KEY = 'applicationPreviews'
 
 const jobTitle = route.query.title || null
 const skipJobStep = !!jobTitle
@@ -26,6 +28,8 @@ const step = ref(1)
 const maxStep = computed(() => skipJobStep ? 4 : 5)
 const hasSubmitted = ref(false)
 const submittedStep = ref(1)
+const applicationPreviews = ref([])
+let formatted = ref(null)
 
 // const form = reactive({
 //     personal: {
@@ -80,11 +84,11 @@ const errors = reactive({
 })
 
 const statusMessage = computed(() => {
-    if (submittedStep.value === 1) return 'Wir analysieren deie Benutzerdaten...'
-    if (submittedStep.value === 2) return `Wir analysieren und suchen Informationen über deie Traumstelle, (${form.job.companyName})...`
+    if (submittedStep.value === 1) return 'Wir analysieren deine Benutzerdaten...'
+    if (submittedStep.value === 2) return `Wir analysieren und suchen Informationen über deine Traumstelle (${form.job.companyName})...`
     if (submittedStep.value === 3) return 'Wir erstellen mehrere Varianten deines Bewerbungsschreibens...'
-    if (submittedStep.value === 4 && !skipJobStep) return '🏢 Jetzt zur Stelle, auf die du dich bewirbst...'
-    if (submittedStep.value === maxStep.value) return '🚀 Vorschau bereit – dein Bewerbungsschreiben wird generiert...'
+    if (submittedStep.value === 4) return 'Wir formatieren dein Bewerbungsschreiben...'
+    if (submittedStep.value === 5) return '🚀 Vorschau bereit - dein Bewerbungsschreiben wird generiert...'
     return ''
 })
 
@@ -103,12 +107,23 @@ onMounted(() => {
         const parsedStep = parseInt(savedStep)
         if (!isNaN(parsedStep)) step.value = parsedStep
     }
+
+    const savedSubmittedStep = localStorage.getItem(SUBMITTED_STEP_KEY)
+    if (savedSubmittedStep) {
+        submittedStep.value = parseInt(savedSubmittedStep)
+    }
+
+    const savedPreviews = localStorage.getItem(PREVIEWS_KEY)
+    if (savedPreviews) {
+        applicationPreviews.value = JSON.parse(savedPreviews)
+    }
 })
-watch(form, (newVal) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newVal))
-}, { deep: true })
-watch(step, (newStep) => {
-    localStorage.setItem(STEP_KEY, newStep.toString())
+watch(submittedStep, (val) => {
+    localStorage.setItem(SUBMITTED_STEP_KEY, val.toString())
+})
+
+watch(applicationPreviews, (val) => {
+    localStorage.setItem(PREVIEWS_KEY, JSON.stringify(val))
 })
 
 const submitForm = () => {
@@ -218,13 +233,23 @@ async function CreateApplication(formData) {
     const prompt = buildApplicationPrompt(formData, insights)
     const variants = await generateApplicationLetter(prompt)
     console.log('generated variants', variants)
-//     const formatted = formatPreview(variants)
+    submittedStep.value = 4
+    formatted = formatPreview(variants)
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    console.log('formatted', formatted)
+    submittedStep.value = 5
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    applicationPreviews.value = formatted
+    submittedStep.value = 6
 //     const resultPath = await exportToPDF(formatted)
 //     await optionallySendMail(formatted, formData)
 //     await storeInHistory(formData, formatted)
-//     return { variants, resultPath }
 }
 
+
+const resultPath = async() => {
+    await exportToPDF(formatted)
+}
 const nextStep = () => {
     if (step.value === maxStep.value) return
     const currentStepValid = validateCurrentStep()
@@ -453,7 +478,7 @@ const submittedProgress = computed(() => {
             </div>
         </div>
             <!-- statusMessage -->      
-        <div v-else class="text-center py-24">
+        <div v-else-if="hasSubmitted && submittedStep < 6" class="text-center py-24">
             <h2 class="text-3xl font-bold mb-4 text-primary">🎉 Danke, {{ form.personal.firstName }}!</h2>
             <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
                 Deine Angaben wurden erfolgreich übermittelt.<br />
@@ -465,6 +490,34 @@ const submittedProgress = computed(() => {
                         </div>
                 </div>
                 <p class="text-sm text-gray-500 mt-2 dark:text-gray-400">Dies kann einige Sekunden dauern...</p>
+            </div>
+        </div>
+
+
+
+        <div v-if="submittedStep == 6" class="text-center py-24">
+            <h2 class="text-3xl font-bold mb-4 text-primary">🚀 Bewerbungsschreiben bereit!</h2>
+            <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+                Dein Bewerbungsschreiben wurde erfolgreich erstellt.<br />
+                Du kannst es jetzt herunterladen oder per E-Mail versenden.
+            </p>
+            <br>
+            <div class="mt-12 space-y-8 max-w-4xl mx-auto text-left" v-if="applicationPreviews.length > 0">
+                <h3 class="text-2xl font-semibold mb-4">Vorschau deiner Bewerbung:</h3>
+
+                <div v-for="(letter, index) in applicationPreviews" :key="index" class="bg-white dark:bg-gray-dark-800 p-6 rounded-lg shadow-lg border dark:border-gray-dark-600">
+                    <h4 class="text-lg font-bold text-primary mb-2">{{ letter.style }}</h4>
+                    <div class="prose prose-sm dark:prose-invert max-w-none" v-html="letter.html"></div>
+                </div>
+            </div>
+            <div class="flex justify-center gap-4 mt-8">
+
+                <button class="bg-primary hover:bg-primary-light text-white font-semibold py-2 px-4 rounded-md" @click="resultPath">
+                    Bewerbungsschreiben herunterladen  
+                </button>
+                <button class="bg-secondary hover:bg-[#58cae7] text-black font-semibold py-2 px-4 rounded-md">
+                    Bewerbungsschreiben per E-Mail versenden
+                </button>
             </div>
         </div>
     </div>
