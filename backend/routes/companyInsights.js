@@ -19,26 +19,28 @@ Antwort im JSON-Format mit den Keys: mission, values[], technologies[], keyPoint
 `
 
   try {
-    const groqRes = await fetch('https://api.groq.com/v1/chat/completions', {
+    const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${process.env.GROQ_API_KEY}`
       },
       body: JSON.stringify({
-        model: 'mixtral-8x7b-32768',
+        model: 'meta-llama/llama-4-scout-17b-16e-instruct',
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.7
       })
     })
 
     const data = await groqRes.json()
-    console.log('Groq Antwort:', JSON.stringify(data, null, 2))
 
     const responseText = data.choices?.[0]?.message?.content
     if (!responseText) throw new Error('Groq lieferte keine gültige Antwort')
 
-    const parsed = JSON.parse(responseText)
+    const match = responseText.match(/```json([\s\S]*?)```/)
+    if (!match) throw new Error('Kein JSON-Block gefunden')
+
+    const parsed = JSON.parse(match[1].trim())
     res.json(parsed)
   } catch (err) {
     console.error('Groq Fehler:', err)
