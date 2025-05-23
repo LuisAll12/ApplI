@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDarkMode } from '../composables/useDarkMode.js'
 import DarkToggle from '../components/DarkToggle.vue'
@@ -8,57 +8,58 @@ import phoneMockup from '../assets/images/phone-mockup.png'
 
 const route = useRoute()
 const router = useRouter()
-const { dark, toggleDark } = useDarkMode()
+const STORAGE_KEY = 'bewerbungsForm'
+
 const jobTitle = route.query.title || null
 const skipJobStep = !!jobTitle
 
 const step = ref(1)
 const maxStep = computed(() => skipJobStep ? 4 : 5)
 
-// const form = reactive({
-//     personal: {
-//         firstName: '',
-//         lastName: '',
-//         email: '',
-//         phone: '',
-//     },
-//     experience: {
-//         education: '',
-//         currentJob: '',
-//         yearsExperience: ''
-//     },
-//     motivation: {
-//         strengths: '',
-//         whyThisField: '',
-//     },
-//     job: {
-//         companyName: jobTitle || '',
-//         position: '',
-//         employmentType: '100%',
-//     }
-// })
 const form = reactive({
     personal: {
-        firstName: 'Luis',
-        lastName: 'Allamand',
-        email: 'luis@g-12.ch',
-        phone: '0783123399',
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
     },
     experience: {
-        education: 'Applikationsentwickler EFZ mit Berufsmatur',
-        currentJob: 'Informatikmitelschule',
-        yearsExperience: '2'
+        education: '',
+        currentJob: '',
+        yearsExperience: ''
     },
     motivation: {
-        strengths: 'Mathe und Informatik',
-        whyThisField: 'Es macht mir Spass und ich kann meine Stärken einsetzen',
+        strengths: '',
+        whyThisField: '',
     },
     job: {
-        companyName: jobTitle || 'UBS Group AG',
-        position: 'Informatiker',
+        companyName: jobTitle || '',
+        position: '',
         employmentType: '100%',
     }
 })
+// const form = reactive({
+//     personal: {
+//         firstName: 'Luis',
+//         lastName: 'Allamand',
+//         email: 'luis@g-12.ch',
+//         phone: '0783123399',
+//     },
+//     experience: {
+//         education: 'Applikationsentwickler EFZ mit Berufsmatur',
+//         currentJob: 'Informatikmitelschule',
+//         yearsExperience: '2'
+//     },
+//     motivation: {
+//         strengths: 'Mathe und Informatik',
+//         whyThisField: 'Es macht mir Spass und ich kann meine Stärken einsetzen',
+//     },
+//     job: {
+//         companyName: jobTitle || 'UBS Group AG',
+//         position: 'Informatiker',
+//         employmentType: '100%',
+//     }
+// })
 
 const errors = reactive({
     personal: {},
@@ -66,6 +67,20 @@ const errors = reactive({
     motivation: {},
     job: {}
 })
+
+onMounted(() => {
+    const saved = localStorage.getItem(STORAGE_KEY)
+    if (saved) {
+        const parsed = JSON.parse(saved)
+        Object.assign(form.personal, parsed.personal || {})
+        Object.assign(form.experience, parsed.experience || {})
+        Object.assign(form.motivation, parsed.motivation || {})
+        Object.assign(form.job, parsed.job || {})
+    }
+})
+watch(form, (newVal) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(newVal))
+}, { deep: true })
 
 const submitForm = () => {
     if (!validateForm()) return
