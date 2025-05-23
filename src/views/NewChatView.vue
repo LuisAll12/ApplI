@@ -3,6 +3,7 @@ import { ref, reactive, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useDarkMode } from '../composables/useDarkMode.js'
 import { ArrowLeftIcon, ArrowRightIcon, CheckIcon } from '@heroicons/vue/24/solid'
+import phoneMockup from '../assets/images/phone-mockup.png'
 
 const route = useRoute()
 const router = useRoute()
@@ -280,48 +281,57 @@ const prevStep = () => {
 
 
         <!-- Step 5: Zusammenfassung -->
-        <div v-if="step === maxStep" class="space-y-6">
-        <h3 class="text-2xl font-semibold">Zusammenfassung</h3>
+        <div v-if="step === maxStep" class="relative flex flex-col lg:flex-row justify-between items-start min-h-[600px]">
+            <div class="absolute inset-0 overflow-hidden">
+                <div class="absolute top-[20%] left-[-10%] w-[300px] h-[300px] rounded-full border-4 border-primary opacity-30"></div>
+                <div class="absolute top-[50%] left-0 w-[500px] h-[500px] rounded-full border-4 border-secondary opacity-20"></div>
+            </div>
+            <div class="z-10 w-full lg:w-2/3 space-y-6">
+                <h3 class="text-2xl font-semibold">Zusammenfassung</h3>
 
-        <!-- Persönliches -->
-        <section>
-            <h4 class="text-lg font-semibold text-primary mb-2">Persönliche Angaben</h4>
-            <ul class="space-y-1 text-sm text-gray-800 dark:text-gray-200">
-                <li><strong>Vorname:</strong> {{ form.personal.firstName }}</li>
-                <li><strong>Nachname:</strong> {{ form.personal.lastName }}</li>
-                <li><strong>E-Mail:</strong> {{ form.personal.email }}</li>
-                <li><strong>Telefon:</strong> {{ form.personal.phone }}</li>
-            </ul>
-        </section>
+                <!-- Persönliches -->
+                <section>
+                    <h4 class="text-lg font-semibold text-primary mb-2">Persönliche Angaben</h4>
+                    <ul class="space-y-1 text-sm text-gray-800 dark:text-gray-200">
+                        <li><strong>Vorname:</strong> {{ form.personal.firstName }}</li>
+                        <li><strong>Nachname:</strong> {{ form.personal.lastName }}</li>
+                        <li><strong>E-Mail:</strong> {{ form.personal.email }}</li>
+                        <li><strong>Telefon:</strong> {{ form.personal.phone }}</li>
+                    </ul>
+                </section>
 
-        <!-- Berufserfahrung -->
-        <section>
-            <h4 class="text-lg font-semibold text-primary mb-2">Ausbildung & Beruf</h4>
-            <ul class="space-y-1 text-sm text-gray-800 dark:text-gray-200">
-                <li><strong>Ausbildung:</strong> {{ form.experience.education }}</li>
-                <li><strong>Aktueller Beruf:</strong> {{ form.experience.currentJob }}</li>
-                <li><strong>Erfahrung:</strong> {{ form.experience.yearsExperience }} Jahre</li>
-            </ul>
-        </section>
+                <!-- Berufserfahrung -->
+                <section>
+                    <h4 class="text-lg font-semibold text-primary mb-2">Ausbildung & Beruf</h4>
+                    <ul class="space-y-1 text-sm text-gray-800 dark:text-gray-200">
+                        <li><strong>Ausbildung:</strong> {{ form.experience.education }}</li>
+                        <li><strong>Aktueller Beruf:</strong> {{ form.experience.currentJob }}</li>
+                        <li><strong>Erfahrung:</strong> {{ form.experience.yearsExperience }} Jahre</li>
+                    </ul>
+                </section>
 
-        <!-- Motivation -->
-        <section>
-            <h4 class="text-lg font-semibold text-primary mb-2">Motivation</h4>
-            <ul class="space-y-1 text-sm text-gray-800 dark:text-gray-200">
-                <li><strong>Stärken:</strong> {{ form.motivation.strengths }}</li>
-                <li><strong>Interesse am Berufsfeld:</strong> {{ form.motivation.whyThisField }}</li>
-            </ul>
-        </section>
+                <!-- Motivation -->
+                <section>
+                    <h4 class="text-lg font-semibold text-primary mb-2">Motivation</h4>
+                    <ul class="space-y-1 text-sm text-gray-800 dark:text-gray-200">
+                        <li><strong>Stärken:</strong> {{ form.motivation.strengths }}</li>
+                        <li><strong>Interesse am Berufsfeld:</strong> {{ form.motivation.whyThisField }}</li>
+                    </ul>
+                </section>
 
-        <!-- Jobinfos (wenn nicht übersprungen) -->
-        <section v-if="!skipJobStep">
-            <h4 class="text-lg font-semibold text-primary mb-2">Stelleninformationen</h4>
-            <ul class="space-y-1 text-sm text-gray-800 dark:text-gray-200">
-                <li><strong>Unternehmen:</strong> {{ form.job.companyName }}</li>
-                <li><strong>Position:</strong> {{ form.job.position }}</li>
-                <li><strong>Pensum:</strong> {{ form.job.employmentType }}</li>
-            </ul>
-        </section>
+                <!-- Jobinfos (wenn nicht übersprungen) -->
+                <section v-if="!skipJobStep">
+                    <h4 class="text-lg font-semibold text-primary mb-2">Stelleninformationen</h4>
+                    <ul class="space-y-1 text-sm text-gray-800 dark:text-gray-200">
+                        <li><strong>Unternehmen:</strong> {{ form.job.companyName }}</li>
+                        <li><strong>Position:</strong> {{ form.job.position }}</li>
+                        <li><strong>Pensum:</strong> {{ form.job.employmentType }}</li>
+                    </ul>
+                </section>
+            </div>
+            <div class="z-10 mt-10 lg:mt-0 lg:w-1/3 flex justify-center">
+                <img :src="phoneMockup" alt="Phone Mockup" class="w-[250px] lg:w-[320px] drop-shadow-2xl" />
+            </div>
         </div>
 
 
