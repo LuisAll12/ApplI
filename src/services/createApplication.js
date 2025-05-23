@@ -51,14 +51,23 @@ export function formatPreview(variants) {
 
 
 export async function exportToPDF(formattedLetters) {
-    // Beispiel: POST an Backend, das PDF generiert und speichert
-    const res = await fetch('/api/pdf', {
+    const res = await fetch(`${import.meta.env.VITE_APP_BACKEND_URL}/api/pdf`, {
         method: 'POST',
+        headers: {
+        'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ letters: formattedLetters })
     })
-    const { filePath } = await res.json()
-    return filePath
+
+    if (!res.ok) {
+        const err = await res.json()
+        throw new Error('PDF-Export fehlgeschlagen: ' + err.message)
+    }
+
+    const { fileUrl } = await res.json()
+    return fileUrl
 }
+
 
 export async function optionallySendMail(letter, formData) {
     if (!formData.sendMail) return
