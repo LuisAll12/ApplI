@@ -248,7 +248,8 @@ async function CreateApplication(formData) {
 
 
 const resultPath = async() => {
-    await exportToPDF(formatted)
+    const downloadUrl = await exportToPDF(applicationPreviews.value)
+    window.open(downloadUrl, '_blank')
 }
 const nextStep = () => {
     if (step.value === maxStep.value) return

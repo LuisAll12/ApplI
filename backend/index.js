@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import fetch from 'node-fetch';
+import { v4 as uuidv4 } from 'uuid'
 import 'dotenv/config'
 import jobsRoute from './routes/jobs.js'
 import companyInsightsRoute from './routes/companyInsights.js'
