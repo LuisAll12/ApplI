@@ -80,6 +80,8 @@ const searchJobs = async () => {
 
 // 🟣 Chat starten mit Job-Inserat
 const startChat = (job) => {
+  localStorage.setItem('selectedJob', JSON.stringify(job))
+
   router.push({
     name: 'NewChat',
     query: {

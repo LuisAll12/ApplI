@@ -31,50 +31,50 @@ const submittedStep = ref(1)
 const applicationPreviews = ref([])
 let formatted = ref(null)
 
-// const form = reactive({
-//     personal: {
-//         firstName: '',
-//         lastName: '',
-//         email: '',
-//         phone: '',
-//     },
-//     experience: {
-//         education: '',
-//         currentJob: '',
-//         yearsExperience: ''
-//     },
-//     motivation: {
-//         strengths: '',
-//         whyThisField: '',
-//     },
-//     job: {
-//         companyName: jobTitle || '',
-//         position: '',
-//         employmentType: '100%',
-//     }
-// })
 const form = reactive({
     personal: {
-        firstName: 'Luis',
-        lastName: 'Allamand',
-        email: 'luis@g-12.ch',
-        phone: '0783123399',
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
     },
     experience: {
-        education: 'Applikationsentwickler EFZ mit Berufsmatur',
-        currentJob: 'Informatikmitelschule',
-        yearsExperience: '2'
+        education: '',
+        currentJob: '',
+        yearsExperience: ''
     },
     motivation: {
-        strengths: 'Mathe und Informatik',
-        whyThisField: 'Es macht mir Spass und ich kann meine Stärken einsetzen',
+        strengths: '',
+        whyThisField: '',
     },
     job: {
-        companyName: jobTitle || 'UBS Group AG',
-        position: 'Informatiker',
+        companyName: jobTitle || '',
+        position: '',
         employmentType: '100%',
     }
 })
+// const form = reactive({
+//     personal: {
+//         firstName: 'Luis',
+//         lastName: 'Allamand',
+//         email: 'luis@g-12.ch',
+//         phone: '0783123399',
+//     },
+//     experience: {
+//         education: 'Applikationsentwickler EFZ mit Berufsmatur',
+//         currentJob: 'Informatikmitelschule',
+//         yearsExperience: '2'
+//     },
+//     motivation: {
+//         strengths: 'Mathe und Informatik',
+//         whyThisField: 'Es macht mir Spass und ich kann meine Stärken einsetzen',
+//     },
+//     job: {
+//         companyName: jobTitle || 'UBS Group AG',
+//         position: 'Informatiker',
+//         employmentType: '100%',
+//     }
+// })
 
 const errors = reactive({
     personal: {},
@@ -278,7 +278,7 @@ const submittedProgress = computed(() => {
         <DarkToggle />
     </header>
     <div class="min-h-screen w-full p-6 bg-white text-gray-900 dark:bg-gray-dark-900 dark:text-white transition-colors">
-        <div v-if="hasSubmitted === false">
+        <div v-if="!hasSubmitted">
             <h2 class="text-2xl font-bold mb-4">Bewerbung - Schritt {{ step }}</h2>
 
             <!-- Step 1: Persönliches -->
@@ -493,7 +493,7 @@ const submittedProgress = computed(() => {
             <div class="w-full max-w-md mx-auto mt-8">
                 <div class="w-full h-3 bg-gray-200 dark:bg-gray-dark-700 rounded-full overflow-hidden shadow-inner">
                     <div class="h-full rounded-full bg-gradient-to-r from-primary to-primary-light transition-all duration-500" :style="{ width: submittedProgress }">
-                        </div>
+                    </div>
                 </div>
                 <p class="text-sm text-gray-500 mt-2 dark:text-gray-400">Dies kann einige Sekunden dauern...</p>
             </div>
@@ -501,7 +501,7 @@ const submittedProgress = computed(() => {
 
 
 
-        <div v-if="submittedStep == 6" class="text-center py-24">
+        <div v-else class="text-center py-24">
             <h2 class="text-3xl font-bold mb-4 text-primary">🚀 Bewerbungsschreiben bereit!</h2>
             <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
                 Dein Bewerbungsschreiben wurde erfolgreich erstellt.<br />
@@ -517,7 +517,6 @@ const submittedProgress = computed(() => {
                 </div>
             </div>
             <div class="flex justify-center gap-4 mt-8">
-
                 <button class="bg-primary hover:bg-primary-light text-white font-semibold py-2 px-4 rounded-md" @click="resultPath">
                     Bewerbungsschreiben herunterladen  
                 </button>
