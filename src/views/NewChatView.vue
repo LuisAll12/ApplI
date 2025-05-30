@@ -228,6 +228,15 @@ watch(hasSubmitted, val => {
 
 
 async function CreateApplication(formData) {
+    const user = {
+        name: 'Luis Allamand',
+        email: 'luis@example.com',
+        joined: '01.01.2024',
+        lastLogin: new Date().toLocaleDateString(),
+        applications: 5
+    }
+
+    localStorage.setItem('userData', JSON.stringify(user))
     submittedStep.value = 1
     // wait 3.5 seconds
     await new Promise(resolve => setTimeout(resolve, 3500))

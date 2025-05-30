@@ -5,17 +5,25 @@
       Benutzerinfo
     </h2>
     <div class="text-sm text-gray-700 dark:text-gray-300">
-      <p><strong>Name:</strong> {{ user.name }}</p>
-      <p><strong>Email:</strong> {{ user.email }}</p>
-      <p><strong>Beigetreten:</strong> {{ user.joined }}</p>
-      <p><strong>Letzter Login:</strong> {{ user.lastLogin }}</p>
-      <p><strong>Anzahl Bewerbungen:</strong> {{ user.applications }}</p>
+      <p><strong>Name:</strong> {{ displayUser.name }}</p>
+      <p><strong>Email:</strong> {{ displayUser.email }}</p>
+      <p><strong>Beigetreten:</strong> {{ displayUser.joined }}</p>
+      <p><strong>Letzter Login:</strong> {{ displayUser.lastLogin }}</p>
+      <p><strong>Anzahl Bewerbungen:</strong> {{ displayUser.applications }}</p>
     </div>
-    <button class="mt-4 text-primary hover:underline">See more</button>
   </div>
 </template>
 
 <script setup>
 import { UserIcon } from '@heroicons/vue/24/solid'
-defineProps(['user'])
+import { ref, onMounted } from 'vue'
+
+const displayUser = ref({})
+
+onMounted(() => {
+    const storedUser = localStorage.getItem('userData')
+    if (storedUser) {
+      displayUser.value = JSON.parse(storedUser)
+  }
+})
 </script>
