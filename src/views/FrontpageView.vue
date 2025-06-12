@@ -30,7 +30,7 @@ const { dark, toggleDark } = useDarkMode()
             </div>
             </div>
             <div>
-            <img src="/highSparePic.png" alt="Bewerbungstool" class="rounded-xl shadow-xl" />
+            <img src="../assets/images/F_HEAD.png" alt="Bewerbungstool" class="rounded-xl shadow-xl" />
             </div>
         </div>
         </section>
@@ -40,15 +40,15 @@ const { dark, toggleDark } = useDarkMode()
         <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-8 text-center">
             <div class="bg-white dark:bg-gray-dark-600 p-8 rounded-xl shadow">
             <h3 class="text-xl font-semibold mb-2">Sichere Bewerbung</h3>
-            <p class="text-gray-dark-400 dark:text-gray-light-700">Deine Daten werden sicher übertragen und verarbeitet.</p>
+            <p class="text-gray-dark-300 dark:text-gray-light-700">Deine Daten werden sicher übertragen und verarbeitet.</p>
             </div>
             <div class="bg-white dark:bg-gray-dark-600 p-8 rounded-xl shadow">
             <h3 class="text-xl font-semibold mb-2">Flexible Module</h3>
-            <p class="text-gray-dark-400 dark:text-gray-light-700">Individuelle Inhalte je nach Unternehmen und Rolle.</p>
+            <p class="text-gray-dark-300 dark:text-gray-light-700">Individuelle Inhalte je nach Unternehmen und Rolle.</p>
             </div>
             <div class="bg-white dark:bg-gray-dark-600 p-8 rounded-xl shadow">
             <h3 class="text-xl font-semibold mb-2">Keine versteckten Kosten</h3>
-            <p class="text-gray-dark-400 dark:text-gray-light-700">Ein Preis - alles drin. Keine Abo-Falle.</p>
+            <p class="text-gray-dark-300 dark:text-gray-light-700">Ein Preis - alles drin. Keine Abo-Falle.</p>
             </div>
         </div>
         </section>
@@ -69,15 +69,35 @@ const { dark, toggleDark } = useDarkMode()
         <!-- How It Works -->
         <section class="bg-gradient-to-br from-primary to-primaryLight text-white py-20 px-6">
         <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-            <img src="/wideSparePic.png" alt="App Mockup" class="rounded-xl shadow-xl" />
+            <img src="../assets/images/F_MID.png" alt="App Mockup" class="rounded-xl" />
             <div>
-            <h2 class="text-3xl font-semibold mb-4">So funktioniert's</h2>
-            <ul class="space-y-4">
-                <li>✅ Daten eingeben</li>
-                <li>✅ Zielunternehmen analysieren lassen</li>
-                <li>✅ Vorschau prüfen & PDF downloaden</li>
-                <li>✅ Bewerben!</li>
-            </ul>
+                <h2 class="text-3xl font-semibold mb-4">So funktioniert's</h2>
+                <ul class="space-y-4 text-white">
+                    <li class="flex items-start space-x-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>Daten eingeben</span>
+                    </li>
+                    <li class="flex items-start space-x-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553 2.276A1 1 0 0120 13.118v.764a1 1 0 01-.447.842L15 17M4 6h16M4 10h16M4 14h8" />
+                        </svg>
+                        <span>Zielunternehmen analysieren lassen</span>
+                    </li>
+                    <li class="flex items-start space-x-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16h8M8 12h8m-8-4h8m2 12H6a2 2 0 01-2-2V6a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z" />
+                        </svg>
+                        <span>Vorschau prüfen & PDF downloaden</span>
+                    </li>
+                    <li class="flex items-start space-x-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                        <span>Bewerben!</span>
+                    </li>
+                </ul>
             </div>
         </div>
         </section>
@@ -133,7 +153,7 @@ const { dark, toggleDark } = useDarkMode()
             </div>
             <div>
             <h4 class="font-semibold mb-2">Download</h4>
-            <img src="/sqareSparePic.png" alt="Download App" class="w-24 rounded-lg">
+            <img src="/download.png" alt="Download App" class="w-24 rounded-lg">
             </div>
         </div>
             <div class="mt-10 text-center text-sm text-gray-light-700">&copy; 2025 ApplI - Alle Rechte vorbehalten.</div>

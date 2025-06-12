@@ -229,9 +229,9 @@ watch(hasSubmitted, val => {
 
 async function CreateApplication(formData) {
     const user = {
-        name: 'Luis Allamand',
-        email: 'luis@example.com',
-        joined: '01.01.2024',
+        name: `${formData.personal.firstName} ${formData.personal.lastName}`,
+        email: formData.personal.email,
+        joined: '13.05.2025',
         lastLogin: new Date().toLocaleDateString(),
         applications: 5
     }
