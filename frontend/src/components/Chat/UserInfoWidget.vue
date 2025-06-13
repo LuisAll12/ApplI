@@ -7,7 +7,7 @@
     <div class="text-sm text-gray-700 dark:text-gray-300" v-if="displayUser.name">
       <p><strong>Name:</strong> {{ displayUser.name }}</p>
       <p><strong>Email:</strong> {{ displayUser.email }}</p>
-      <p><strong>Beigetreten:</strong> {{ displayUser.joined }}</p>
+      <p><strong>Beigetreten:</strong> {{ formatDate(displayUser.joined) }}</p>
       <p><strong>Anzahl Bewerbungen:</strong> {{ displayUser.applications }}</p>
     </div>
     <div v-else class="text-sm text-red-500">
@@ -22,6 +22,11 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
 const displayUser = ref({})
+
+function formatDate(isoDate) {
+  if (!isoDate) return ''
+  return new Intl.DateTimeFormat('de-CH').format(new Date(isoDate))
+}
 
 onMounted(async () => {
   try {
