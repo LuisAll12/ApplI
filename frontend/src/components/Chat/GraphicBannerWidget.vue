@@ -2,10 +2,10 @@
   <div class="rounded-2xl overflow-hidden shadow w-full bg-cover bg-center" style="background-image: url('/graphic-banner.png')">
     <div class="p-6 text-white md:flex-row items-start md:items-center justify-between">
       <div>
-        <h2 class="text-lg font-semibold mb-1 flex items-center">
+        <router-link to="/new-chat" class="text-lg font-semibold mb-1 flex items-center">
           <ChatBubbleLeftRightIcon class="w-5 h-5 mr-2 text-white" />
           Neuer Chat starten
-        </h2>
+        </router-link>
         <p class="text-sm text-white/90 max-w-md">
           Mit Hilfe unserer KI-Analyse, kannst du ein für dich Personalisiertes Bewerbungsschreiben erschaffen.
         </p>
