@@ -3,13 +3,14 @@ import cors from 'cors'
 import { sequelize } from './sequelize.js'
 import './models/User.js'
 import './models/Application.js'
+import dotenv from 'dotenv'
 
 import usersRoute from './routes/users.js'
 import jobsRoute from './routes/jobs.js'
 import companyInsightsRoute from './routes/companyInsights.js'
 import groqRoute from './routes/groq.js'
 import pdfRoute from './routes/pdf.js'
-import dotenv from 'dotenv'
+import authRoute from './routes/auth.js'
 
 dotenv.config()
 const app = express()
@@ -17,6 +18,7 @@ app.use(cors())
 app.use(express.json())
 
 app.use('/api/users', usersRoute)
+app.use('/api/auth', authRoute)
 app.use('/api/jobs', jobsRoute)
 app.use('/api/company-insights', companyInsightsRoute)
 app.use('/api/groq', groqRoute)
