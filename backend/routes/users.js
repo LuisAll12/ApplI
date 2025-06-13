@@ -40,7 +40,7 @@ router.post('/', async (req, res) => {
 
 router.get('/:id', verifyToken, async (req, res) => {
   const user = await User.findByPk(req.params.id, {
-    attributes: ['firstName', 'lastName', 'email', 'createdAt', 'lastLogin']
+    attributes: ['firstName', 'lastName', 'email', 'createdAt']
   })
   if (!user) return res.status(404).json({ message: 'User nicht gefunden' })
 
@@ -48,8 +48,8 @@ router.get('/:id', verifyToken, async (req, res) => {
     name: `${user.firstName} ${user.lastName}`,
     email: user.email,
     joined: user.createdAt,
-    lastLogin: user.lastLogin,
-    applications: 5 // später dynamisch zählen
+    lastLogin: null, // oder weglassen
+    applications: 5
   })
 })
 

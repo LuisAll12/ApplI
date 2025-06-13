@@ -8,7 +8,6 @@
       <p><strong>Name:</strong> {{ displayUser.name }}</p>
       <p><strong>Email:</strong> {{ displayUser.email }}</p>
       <p><strong>Beigetreten:</strong> {{ displayUser.joined }}</p>
-      <p><strong>Letzter Login:</strong> {{ displayUser.lastLogin }}</p>
       <p><strong>Anzahl Bewerbungen:</strong> {{ displayUser.applications }}</p>
     </div>
     <div v-else class="text-sm text-red-500">
@@ -39,6 +38,7 @@ onMounted(async () => {
     })
 
     displayUser.value = res.data
+    console.log('Benutzerdaten geladen:', displayUser.value)  
   } catch (err) {
     console.error('Fehler beim Laden der Benutzerdaten:', err)
   }

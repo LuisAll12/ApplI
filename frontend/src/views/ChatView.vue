@@ -37,8 +37,8 @@ const isAuthenticated = ref(false)
 const showAuthModal = ref(false)
 
 onMounted(() => {
-  const token = localStorage.getItem('token')
-  isAuthenticated.value = !!token
+  const userData = JSON.parse(localStorage.getItem('userData'))
+  isAuthenticated.value = !!userData?.token
   if (!isAuthenticated.value) showAuthModal.value = true
 })
 
