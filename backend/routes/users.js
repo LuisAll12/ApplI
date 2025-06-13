@@ -39,18 +39,27 @@ router.post('/', async (req, res) => {
 })
 
 router.get('/:id', verifyToken, async (req, res) => {
-  const user = await User.findByPk(req.params.id, {
-    attributes: ['firstName', 'lastName', 'email', 'createdAt']
-  })
-  if (!user) return res.status(404).json({ message: 'User nicht gefunden' })
+  try {
+    const user = await User.findByPk(req.params.id, {
+      attributes: ['id', 'firstName', 'lastName', 'email', 'createdAt']
+    })
 
-  res.json({
-    name: `${user.firstName} ${user.lastName}`,
-    email: user.email,
-    joined: user.createdAt,
-    lastLogin: null, // oder weglassen
-    applications: 5
-  })
+    if (!user) return res.status(404).json({ message: 'User nicht gefunden' })
+
+    const applicationCount = await user.countApplications()
+
+    res.json({
+      name: `${user.firstName} ${user.lastName}`,
+      email: user.email,
+      joined: user.createdAt,
+      lastLogin: null,
+      applications: applicationCount
+    })
+  } catch (err) {
+    console.error('Fehler beim Laden des Benutzers:', err)
+    res.status(500).json({ message: 'Serverfehler beim Laden des Benutzers' })
+  }
 })
+
 
 export default router
