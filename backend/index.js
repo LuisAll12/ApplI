@@ -9,7 +9,9 @@ import jobsRoute from './routes/jobs.js'
 import companyInsightsRoute from './routes/companyInsights.js'
 import groqRoute from './routes/groq.js'
 import pdfRoute from './routes/pdf.js'
+import dotenv from 'dotenv'
 
+dotenv.config()
 const app = express()
 app.use(cors())
 app.use(express.json())

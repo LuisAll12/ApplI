@@ -1,8 +1,14 @@
-// /sequelize.js
 import { Sequelize } from 'sequelize'
+import dotenv from 'dotenv'
+dotenv.config()
 
-export const sequelize = new Sequelize('appli_db', 'root', 'dein_passwort', {
+export const sequelize = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASS,
+  {
     host: 'localhost',
     dialect: 'mariadb',
-    logging: false,
-})
+    logging: false
+  }
+)
