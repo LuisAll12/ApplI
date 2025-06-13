@@ -1,9 +1,9 @@
 import express from 'express'
 import cors from 'cors'
-import { sequelize } from './sequelize.js'
 import './models/User.js'
 import './models/Application.js'
 import dotenv from 'dotenv'
+import { connectDB, sequelize } from "./sequelize.js";
 
 import usersRoute from './routes/users.js'
 import jobsRoute from './routes/jobs.js'
@@ -17,6 +17,8 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
+const PORT = process.env.PORT || 3000
+
 app.use('/api/users', usersRoute)
 app.use('/api/auth', authRoute)
 app.use('/api/jobs', jobsRoute)
@@ -26,11 +28,19 @@ app.use('/api/pdf', pdfRoute)
 app.use('/pdf', express.static('public/pdf'))
 
 // ⛓️ Datenbank-Synchronisierung
-sequelize.sync({ alter: true })  // ⚠️ Nutze alter:true nur in dev!
-  .then(() => {
-    console.log('✅ Datenbank synchronisiert.')
-    app.listen(3000, () => console.log('API läuft auf http://localhost:3000'))
-  })
-  .catch(err => {
-    console.error('❌ Fehler beim DB-Sync:', err)
-  })
+async function startServer() {
+    await connectDB();
+    try {
+        await sequelize.sync();
+        console.log("✅ Datenbank synchronisiert!");
+    } catch (error) {
+        console.error("❌ Fehler beim Starten des Servers:", error);
+    }
+    finally {
+        app.listen(PORT, () => {
+            console.log(`🚀 Server läuft auf http://localhost:${PORT}`);
+        });
+    }
+}
+
+startServer();

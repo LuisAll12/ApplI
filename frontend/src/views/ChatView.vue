@@ -12,6 +12,7 @@
     <ApplicationPlacesWidget :applications="data.applications" />
     <FeedbackWidget :feedback="data.feedback" class="xl:col-span-3" />
   </div>
+  <AuthModal v-if="showAuthModal" @auth-success="handleAuthSuccess" />
 </template>
 
 <script setup>
@@ -21,12 +22,30 @@ import UserInfoWidget from '../components/Chat/UserInfoWidget.vue'
 import ApplicationPlacesWidget from '../components/Chat/ApplicationPlacesWidget.vue'
 import FeedbackWidget from '../components/Chat/FeedbackWidget.vue'
 import GraphicBannerWidget from '../components/Chat/GraphicBannerWidget.vue'
+import AuthModal from '../components/AuthModal.vue'
 
 import { useDarkMode } from '../composables/useDarkMode.js'
 import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
 
 
 const router = useRouter()
 const { dark, toggleDark } = useDarkMode()
+
+
+const isAuthenticated = ref(false)
+const showAuthModal = ref(false)
+
+onMounted(() => {
+  const token = localStorage.getItem('token')
+  isAuthenticated.value = !!token
+  if (!isAuthenticated.value) showAuthModal.value = true
+})
+
+const handleAuthSuccess = (user) => {
+  isAuthenticated.value = true
+  showAuthModal.value = false
+  console.log('✅ Authentifiziert:', user)
+}
 
 </script>
