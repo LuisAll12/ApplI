@@ -15,7 +15,7 @@ import authRoute from './routes/auth.js'
 dotenv.config()
 const app = express()
 app.use(cors())
-app.use(express.json())
+app.use(express.json()) 
 
 const PORT = process.env.PORT || 3000
 
@@ -31,7 +31,7 @@ app.use('/pdf', express.static('public/pdf'))
 async function startServer() {
     await connectDB();
     try {
-        await sequelize.sync();
+        await sequelize.sync({ alter: true })
         console.log("✅ Datenbank synchronisiert!");
     } catch (error) {
         console.error("❌ Fehler beim Starten des Servers:", error);

@@ -2,6 +2,7 @@
 import express from 'express'
 import { User } from '../models/User.js'
 import { Application } from '../models/Application.js'
+import { verifyToken } from '../middleware/verifyToken.js'
 import { v4 as uuidv4 } from 'uuid'
 
 const router = express.Router()
@@ -35,6 +36,21 @@ router.post('/', async (req, res) => {
     console.error(err)
     res.status(500).json({ error: 'Fehler beim Speichern' })
   }
+})
+
+router.get('/:id', verifyToken, async (req, res) => {
+  const user = await User.findByPk(req.params.id, {
+    attributes: ['firstName', 'lastName', 'email', 'createdAt', 'lastLogin']
+  })
+  if (!user) return res.status(404).json({ message: 'User nicht gefunden' })
+
+  res.json({
+    name: `${user.firstName} ${user.lastName}`,
+    email: user.email,
+    joined: user.createdAt,
+    lastLogin: user.lastLogin,
+    applications: 5 // später dynamisch zählen
+  })
 })
 
 export default router

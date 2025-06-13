@@ -54,8 +54,11 @@ const submit = async () => {
       return
     }
 
-    if (res.ok) {
-      localStorage.setItem('token', data.token)
+    if (res.ok && data.token && data.user) {
+      localStorage.setItem('userData', JSON.stringify({
+        id: data.user.id,
+        token: data.token
+      }))
       emit('auth-success', data.user)
     } else {
       alert(data.message || 'Fehler beim Authentifizieren')
@@ -65,6 +68,7 @@ const submit = async () => {
     alert('Verbindungsfehler zum Server.')
   }
 }
+
 
 </script>
 
