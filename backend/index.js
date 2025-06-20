@@ -5,12 +5,14 @@ import './models/Application.js'
 import dotenv from 'dotenv'
 import { connectDB, sequelize } from "./sequelize.js";
 
+
 import usersRoute from './routes/users.js'
 import jobsRoute from './routes/jobs.js'
 import companyInsightsRoute from './routes/companyInsights.js'
 import groqRoute from './routes/groq.js'
 import pdfRoute from './routes/pdf.js'
 import authRoute from './routes/auth.js'
+import applicationRoutes from './routes/applications.js'
 
 dotenv.config()
 const app = express()
@@ -26,6 +28,7 @@ app.use('/api/company-insights', companyInsightsRoute)
 app.use('/api/groq', groqRoute)
 app.use('/api/pdf', pdfRoute)
 app.use('/pdf', express.static('public/pdf'))
+app.use('/api/applications', applicationRoutes)
 
 // ⛓️ Datenbank-Synchronisierung
 async function startServer() {

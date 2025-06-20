@@ -226,39 +226,53 @@ watch(hasSubmitted, val => {
 
 
 
-
 async function CreateApplication(formData) {
-    const user = {
-        name: `${formData.personal.firstName} ${formData.personal.lastName}`,
-        email: formData.personal.email,
-        joined: '13.05.2025',
-        lastLogin: new Date().toLocaleDateString(),
-        applications: 5
-    }
+  const userData = JSON.parse(localStorage.getItem('userData'))
+  if (!userData?.id || !userData?.token) {
+    console.warn('❌ Kein eingeloggter Benutzer gefunden')
+    return
+  }
 
-    localStorage.setItem('userData', JSON.stringify(user))
-    submittedStep.value = 1
-    // wait 3.5 seconds
-    await new Promise(resolve => setTimeout(resolve, 3500))
-    submittedStep.value = 2
-    const insights = await fetchCompanyInsights(formData.job.companyName)
-    await new Promise(resolve => setTimeout(resolve, 2500))
-    submittedStep.value = 3
-    const prompt = buildApplicationPrompt(formData, insights)
-    const variants = await generateApplicationLetter(prompt)
-    console.log('generated variants', variants)
-    submittedStep.value = 4
-    formatted = formatPreview(variants)
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    console.log('formatted', formatted)
-    submittedStep.value = 5
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    applicationPreviews.value = formatted
+  submittedStep.value = 1
+  await new Promise(resolve => setTimeout(resolve, 3000))
+  submittedStep.value = 2
+
+  const insights = await fetchCompanyInsights(formData.job.companyName)
+  await new Promise(resolve => setTimeout(resolve, 2000))
+  submittedStep.value = 3
+
+  const prompt = buildApplicationPrompt(formData, insights)
+  const variants = await generateApplicationLetter(prompt)
+  submittedStep.value = 4
+
+  const formattedLetters = formatPreview(variants)
+  await new Promise(resolve => setTimeout(resolve, 1500))
+
+  const selectedLetter = formattedLetters[0].html
+
+  try {
+    await fetch(`${import.meta.env.VITE_APP_BACKEND_URL}/api/applications`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${userData.token}`
+      },
+      body: JSON.stringify({
+        job: formData.job,
+        motivation: formData.motivation,
+        experience: formData.experience,
+        applicationHtml: selectedLetter
+      })
+    })
+
+    applicationPreviews.value = formattedLetters
     submittedStep.value = 6
-//     const resultPath = await exportToPDF(formatted)
-//     await optionallySendMail(formatted, formData)
-//     await storeInHistory(formData, formatted)
+  } catch (err) {
+    console.error('❌ Fehler beim Speichern im Backend:', err)
+    alert('Fehler beim Speichern der Bewerbung.')
+  }
 }
+
 
 
 const resultPath = async() => {
@@ -279,6 +293,44 @@ const submittedProgress = computed(() => {
     const maxSteps = 4
     return `${(submittedStep.value / maxSteps) * 100}%`
 })
+
+
+const sendMail = async () => {
+  const userData = JSON.parse(localStorage.getItem('userData'))
+  const html = applicationPreviews.value[0]?.html
+
+  if (!userData || !userData.token || !html) {
+    alert('Benutzerdaten oder Bewerbung fehlen')
+    return
+  }
+
+  try {
+    const res = await fetch(`${import.meta.env.VITE_APP_BACKEND_URL}/api/applications/send-mail`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${userData.token}`
+      },
+      body: JSON.stringify({
+        email: userData.email || form.personal.email,
+        subject: `Dein Bewerbungsschreiben für ${form.job.companyName}`,
+        html
+      })
+    })
+
+    const data = await res.json()
+
+    if (res.ok) {
+      alert('📧 Bewerbung wurde per E-Mail gesendet!')
+    } else {
+      alert(`Fehler: ${data.message || 'Senden fehlgeschlagen'}`)
+    }
+  } catch (err) {
+    console.error('Fehler beim E-Mail-Versand:', err)
+    alert('Netzwerkfehler beim Senden')
+  }
+}
+
 </script>
 
 <template>
@@ -529,7 +581,7 @@ const submittedProgress = computed(() => {
                 <button class="bg-primary hover:bg-primary-light text-white font-semibold py-2 px-4 rounded-md" @click="resultPath">
                     Bewerbungsschreiben herunterladen  
                 </button>
-                <button class="bg-secondary hover:bg-[#58cae7] text-black font-semibold py-2 px-4 rounded-md">
+                <button class="bg-secondary hover:bg-[#58cae7] text-black font-semibold py-2 px-4 rounded-md" @click="sendMail">
                     Bewerbungsschreiben per E-Mail versenden
                 </button>
             </div>

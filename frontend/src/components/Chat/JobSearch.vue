@@ -64,7 +64,7 @@ const goBack = () => {
 const searchJobs = async () => {
   loading.value = true
   try {
-    const response = await axios.get('http://localhost:3000/api/jobs/search', {
+    const response = await axios.get(`${import.meta.env.VITE_APP_BACKEND_URL}/api/jobs/search`, {
         params: {
             what: searchParams.value.what,
             where: searchParams.value.where,
