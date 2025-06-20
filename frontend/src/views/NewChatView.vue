@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useDarkMode } from '../composables/useDarkMode.js'
 import DarkToggle from '../components/DarkToggle.vue'
 import { ArrowLeftIcon, ArrowRightIcon, CheckIcon } from '@heroicons/vue/24/solid'
-import phoneMockup from '../assets/images/phone-mockup.png'
+import phoneMockup from '/iPhone-Mockup.png'
 import {
     fetchCompanyInsights, 
     buildApplicationPrompt, 
@@ -464,10 +464,11 @@ const sendMail = async () => {
             <div v-if="step === maxStep" class="relative flex flex-col lg:flex-row justify-between items-start min-h-[600px] overflow-hidden">
 
                 <!-- 🔵 Dekorative Kreise im Hintergrund (z-index 0) -->
-                <div class="absolute top-[-170px] right-[-150px] w-[700px] h-[700px] z-0 pointer-events-none">
+                <div class="hidden min-[950px]:block absolute top-[-170px] right-[-150px] w-[700px] h-[700px] z-0 pointer-events-none">
                     <div class="absolute w-full h-full rounded-full bg-gradient-to-br from-primary to-primary-light opacity-70"></div>
                     <div class="absolute top-[80px] right-[80px] w-[500px] h-[500px] rounded-full bg-gradient-to-br from-primary-light to-secondary opacity-60"></div>
                 </div>
+
 
                 <!-- 📱 Phone-Mockup separat -->
                 <div class="absolute top-[20px] right-[80px] z-10 hidden lg:block">
